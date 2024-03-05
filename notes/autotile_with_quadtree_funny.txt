@@ -1,0 +1,314 @@
+import pygame
+import sys
+from os import path
+import json
+
+FPS = 60
+NATIVE_WIDTH = 432
+NATIVE_HEIGHT = 288
+NATIVE_SIZE = (NATIVE_WIDTH, NATIVE_HEIGHT)
+RESOLUTION_SCALE = 4
+WINDOW_WIDTH = NATIVE_WIDTH * RESOLUTION_SCALE
+WINDOW_HEIGHT = NATIVE_HEIGHT * RESOLUTION_SCALE
+WINDOW_SIZE = (WINDOW_WIDTH, WINDOW_HEIGHT)
+TILE_SIZE = 18
+BIG_TILE_SIZE = 24
+NATIVE_WIDTH_TILES = NATIVE_WIDTH // TILE_SIZE
+NATIVE_HEIGHT_TILES = NATIVE_HEIGHT // TILE_SIZE
+NATIVE_SIZE_TILES = (NATIVE_WIDTH_TILES, NATIVE_HEIGHT_TILES)
+CG_PIXEL_3x5_FONT_PATH = path.join('fonts', 'cg-pixel-3x5.ttf')
+CG_PIXEL_3x5_FONT_HEIGHT = 5
+SPRITE_SHEET_PNG_PATH = path.join('images', 'sprite_sheet.png')
+SPRITE_SHEET_DATA_PATH = path.join('data', 'sprite_sheet.json')
+
+pygame.init()
+clock = pygame.time.Clock()
+native_surface = pygame.Surface(NATIVE_SIZE)
+window_surface = pygame.display.set_mode(WINDOW_SIZE)
+font = pygame.font.Font(CG_PIXEL_3x5_FONT_PATH, CG_PIXEL_3x5_FONT_HEIGHT)
+is_debug = False
+
+
+class Quadtree:
+    def __init__(self, capacity, boundary_rect):
+        # Add actors that moves, non moving
+        # Limit before division - dense scene? lower capacity value for more kids
+        # Higher : Lower kids : Better performance
+        self.capacity = capacity
+        # My rect
+        self.boundary_rect = boundary_rect
+        # Holds actors in me
+        self.rects_list = []
+        # My kids
+        self.tl_quadtree = None
+        self.tr_quadtree = None
+        self.bl_quadtree = None
+        self.br_quadtree = None
+
+    def subdivide(self):
+        # Get size
+        x, y, w, h = self.boundary_rect
+        half_w = w // 2
+        half_h = h // 2
+        # Prepare kids rects
+        tl_rect = pygame.Rect(x, y, half_w, half_h)
+        tr_rect = pygame.Rect(x + half_w, y, half_w, half_h)
+        bl_rect = pygame.Rect(x, y + half_h, half_w, half_h)
+        br_rect = pygame.Rect(x + half_w, y + half_h, half_w, half_h)
+        # Instance kids
+        self.tl_quadtree = Quadtree(self.capacity, tl_rect)
+        self.tr_quadtree = Quadtree(self.capacity, tr_rect)
+        self.bl_quadtree = Quadtree(self.capacity, bl_rect)
+        self.br_quadtree = Quadtree(self.capacity, br_rect)
+        # Recurssive based on actors in me
+        for i in range(len(self.rects_list)):
+            # Add each actors in me to kids
+            self.tl_quadtree.insert(self.rects_list[i])
+            self.tr_quadtree.insert(self.rects_list[i])
+            self.bl_quadtree.insert(self.rects_list[i])
+            self.br_quadtree.insert(self.rects_list[i])
+
+    def insert(self, rect):
+        # Actor not in me? False
+        if not self.boundary_rect.collidepoint(rect.center):
+            return False
+        # Still under capacity? No kids? Add actor to list
+        if len(self.rects_list) < self.capacity and self.tl_quadtree is None:
+            self.rects_list.append(rect)
+            return True
+        # Capacity alr full?
+        else:
+            # Make kids
+            if self.tl_quadtree is None:
+                self.subdivide()
+            # Pass actor to kids
+            if self.tl_quadtree.insert(rect):
+                return True
+            if self.tr_quadtree.insert(rect):
+                return True
+            if self.bl_quadtree.insert(rect):
+                return True
+            if self.br_quadtree.insert(rect):
+                return True
+            return False
+
+    def query_range(self, given_rect):
+        # Container
+        rects_in_range = []
+        # Actor not in me? return []
+        if not self.boundary_rect.colliderect(given_rect):
+            return rects_in_range
+        # Fill container with actors in my list that are close to given actor
+        for rect in self.rects_list:
+            if given_rect != rect and given_rect.colliderect(rect):
+                rects_in_range.append(rect)
+        # Got kids? add their container to mine
+        if self.tl_quadtree is not None:
+            rects_in_range.extend(self.tl_quadtree.query_range(given_rect))
+            rects_in_range.extend(self.tr_quadtree.query_range(given_rect))
+            rects_in_range.extend(self.bl_quadtree.query_range(given_rect))
+            rects_in_range.extend(self.br_quadtree.query_range(given_rect))
+        return rects_in_range
+
+    def reset(self, surface):
+        # Draw my border
+        pygame.draw.rect(surface, pygame.Color("white"), self.boundary_rect, 1)
+        # Got kids? draw theirs too
+        if self.tl_quadtree is not None:
+            self.tl_quadtree.reset(surface)
+            self.tr_quadtree.reset(surface)
+            self.bl_quadtree.reset(surface)
+            self.br_quadtree.reset(surface)
+            self.tl_quadtree = None
+            self.tr_quadtree = None
+            self.bl_quadtree = None
+            self.br_quadtree = None
+
+
+class Sprite(pygame.sprite.Sprite):
+    def __init__(self, groups, sprite_sheet_surface, position, real_rect, frames_list):
+        super().__init__(groups)
+        self.image = sprite_sheet_surface
+        self.rect = self.image.get_frect(topleft=position)  # Sprite sheet rect
+        self.real_rect = real_rect  # Frame rect
+        self.real_rect.topleft = self.rect.topleft
+        self.frames_list = frames_list
+        self.frame_index = 0
+
+
+class Group(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+
+    def draw(self, native_surface, camera_rect):
+        for sprite in self:
+            # Bring real rect to rect
+            sprite.real_rect.topleft = sprite.rect.topleft
+            # Get render position
+            sprite_rect_render_position = (
+                sprite.rect.x - camera_rect.x,
+                sprite.rect.y - camera_rect.y
+            )
+            # Update sprite frame
+            sprite_frame_region = sprite.frames_list[sprite.frame_index]
+            # Render
+            native_surface.blit(
+                sprite.image,
+                sprite_rect_render_position,
+                sprite_frame_region,
+            )
+
+
+class LevelEditor():
+    def __init__(self):
+        # One scene one sprite sheet
+        self.sprite_sheet_surface = pygame.image.load(
+            SPRITE_SHEET_PNG_PATH
+        ).convert_alpha()
+        # Load this sprite sheet data and store it
+        with open(SPRITE_SHEET_DATA_PATH, 'r') as file:
+            json_data = json.load(file)
+        for sprite_name, sprite_data in json_data.items():
+            frect_frames_list = []
+            for frame in sprite_data["frames_list"]:
+                frect = pygame.Rect(
+                    frame["x"], frame["y"], frame["w"], frame["h"]
+                )
+                frect_frames_list.append(pygame.FRect(frect))
+            sprite_data["frames_list"] = frect_frames_list
+        self.sprite_sheet_data = json_data
+        self.sprite_sheet_data["grass_block"]["bitmasks"] = {
+            int(key): value for key, value in self.sprite_sheet_data["grass_block"]["bitmasks"].items()
+        }
+        # Groups
+        self.group = Group()
+        # Things are drawn relative to this
+        self.camera_rect = pygame.FRect(
+            0,
+            0,
+            NATIVE_WIDTH,
+            NATIVE_HEIGHT
+        )
+
+        self.quadtree = Quadtree(4, pygame.Rect(
+            0, 0, NATIVE_WIDTH, NATIVE_HEIGHT))
+
+    def input(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # Get mouse position
+            mouse_window_position = pygame.mouse.get_pos()
+            mouse_native_render_grid_snapped = (
+                ((mouse_window_position[0] // RESOLUTION_SCALE) +
+                 int(self.camera_rect.x)) // TILE_SIZE * TILE_SIZE,
+                ((mouse_window_position[1] // RESOLUTION_SCALE) +
+                 int(self.camera_rect.y)) // TILE_SIZE * TILE_SIZE
+            )
+            # Instance tile on mouse click
+            Sprite(
+                self.group,
+                self.sprite_sheet_surface,
+                mouse_native_render_grid_snapped,
+                pygame.FRect(
+                    0,
+                    0,
+                    TILE_SIZE,
+                    TILE_SIZE
+                ),
+                self.sprite_sheet_data["grass_block"]["frames_list"]
+            )
+            self.quadtree.rects_list = []
+            # for actor in actors_list:
+            for tile in self.group:
+                self.quadtree.insert(tile.real_rect)
+            # Check each tile
+            for this in self.group:
+                neighbors = self.quadtree.query_range(
+                    this.rect.inflate(TILE_SIZE, TILE_SIZE))
+                # Compare this tile with everyone else to find neighbours
+                br = 0
+                b = 0
+                bl = 0
+                r = 0
+                l = 0
+                tr = 0
+                t = 0
+                tl = 0
+                for other in neighbors:
+                    dx = int(other.x-this.rect.x) // TILE_SIZE
+                    dy = int(other.y-this.rect.y) // TILE_SIZE
+                    # This other is too far, find someone else
+                    if abs(dx) > 1 or abs(dy) > 1:
+                        continue
+                    t += dx == 0 and dy == -1
+                    r += dx == 1 and dy == 0
+                    b += dx == 0 and dy == 1
+                    l += dx == -1 and dy == 0
+                    br += dx == 1 and dy == 1
+                    bl += dx == -1 and dy == 1
+                    tr += dx == 1 and dy == -1
+                    tl += dx == -1 and dy == -1
+                tr = tr and t and r
+                tl = tl and t and l
+                br = br and b and r
+                bl = bl and b and l
+                mask_id = (br << 7) | (b << 6) | (bl << 5) | (
+                    r << 4) | (l << 3) | (tr << 2) | (t << 1) | tl
+                if mask_id not in self.sprite_sheet_data["grass_block"]["bitmasks"]:
+                    mask_id = 0
+                this.frame_index = self.sprite_sheet_data["grass_block"]["bitmasks"][mask_id]
+
+    def update(self, native_surface, dt):
+        # Arrow keys direction
+        key_is_pressed = pygame.key.get_pressed()
+        direction_x = key_is_pressed[pygame.K_RIGHT] - \
+            key_is_pressed[pygame.K_LEFT]
+        direction_y = key_is_pressed[pygame.K_DOWN] - \
+            key_is_pressed[pygame.K_UP]
+        # Move camera with arrow keys
+        self.camera_rect.left += direction_x
+        self.camera_rect.top += direction_y
+        # Clear
+        native_surface.fill("black")
+        # Vertical lines
+        for i in range(NATIVE_WIDTH_TILES):
+            x = ((i * TILE_SIZE) - self.camera_rect.left) % NATIVE_WIDTH
+            pygame.draw.line(
+                native_surface,
+                "grey5",
+                (x, 0),
+                (x, NATIVE_HEIGHT)
+            )
+        # Horizontal lines
+        for i in range(NATIVE_HEIGHT_TILES):
+            y = ((i * TILE_SIZE) - self.camera_rect.top) % NATIVE_HEIGHT
+            pygame.draw.line(
+                native_surface,
+                "grey5",
+                (0, y),
+                (NATIVE_WIDTH, y)
+            )
+        # Group
+        self.group.draw(native_surface, self.camera_rect)
+        self.quadtree.reset(native_surface)
+
+
+current_scene = LevelEditor()
+
+while 1:
+    dt = clock.tick(FPS) / 1000
+    for event in pygame.event.get():
+        # Close window
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        # Debug toggle
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_0:
+                is_debug = not is_debug
+        # Scene event
+        current_scene.input(event)
+    # Scene update
+    current_scene.update(native_surface, dt)
+    # Resize native
+    pygame.transform.scale_by(native_surface, RESOLUTION_SCALE, window_surface)
+    pygame.display.update()
