@@ -1,0 +1,2101 @@
+import pygame
+import sys
+from os import path
+
+FPS = 60
+
+NATIVE_WIDTH = 432
+NATIVE_HEIGHT = 288
+NATIVE_SIZE = (NATIVE_WIDTH, NATIVE_HEIGHT)
+
+RESOLUTION_SCALE = 4
+
+WINDOW_WIDTH = NATIVE_WIDTH * RESOLUTION_SCALE
+WINDOW_HEIGHT = NATIVE_HEIGHT * RESOLUTION_SCALE
+WINDOW_SIZE = (WINDOW_WIDTH, WINDOW_HEIGHT)
+
+TILE_SIZE = 18
+BIG_TILE_SIZE = 24
+
+NATIVE_WIDTH_TILES = NATIVE_WIDTH // TILE_SIZE
+NATIVE_HEIGHT_TILES = NATIVE_HEIGHT // TILE_SIZE
+NATIVE_SIZE_TILES = (NATIVE_WIDTH_TILES, NATIVE_HEIGHT_TILES)
+
+CG_PIXEL_3x5_FONT_PATH = path.join('fonts', 'cg-pixel-3x5.ttf')
+CG_PIXEL_3x5_FONT_HEIGHT = 5
+
+SPRITE_SHEET_PATH = path.join('images', 'sprite_sheet.png')
+SPRITE_SHEET_DATA = {
+    "grass_block": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                0,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 1,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 0,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 1,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 0,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "dirt_block": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                0,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                0,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 1,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 0,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 1,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 0,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "snow_block": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                0,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                0,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 1,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 0,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 1,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 0,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "blue_pipe": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "tree_branch": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "tree_leaves": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 16,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "big_mushroom": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 12,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 13,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "water_fall": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "water": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "lock": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "key": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "crate": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "blank_block": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 9,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "dot_block": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 11,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "exclamation_block": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 10,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "chip": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 8,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "brick": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 6,
+                0,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "stone": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "heart": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "ladder": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE * 2,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "hanger": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "spike": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "diamond": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "lever": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "arrow_sign": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "sign": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "rope": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE * 3,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 4,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "spring": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "short_fence": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "tall_fence": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "flag": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "tall_shroom": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "small_shroom": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "small_cactus": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "small_tree": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "tall_grass": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "grass": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "cloud": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "coin": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "door": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE * 5,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE * 6,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+        ]
+    },
+    "blue_button": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "metal_thin_tile": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "wood_thin_tile": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "snowman": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "snow_grass": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE,
+            ),
+        ]
+    },
+    "numbers": {
+        "frames_list": [
+            pygame.FRect(
+                0,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 2,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 3,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 4,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 5,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 6,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 7,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 8,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 9,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 10,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 11,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 13,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 14,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 15,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 16,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE * 8,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 19,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 18,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+            pygame.FRect(
+                TILE_SIZE * 17,
+                TILE_SIZE * 7,
+                TILE_SIZE,
+                TILE_SIZE
+            ),
+        ]
+    },
+    "forest_background": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 12 + BIG_TILE_SIZE * 4,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE * 3
+            ),
+        ]
+    },
+    "desert_background": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 12 + BIG_TILE_SIZE * 2,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE * 3
+            ),
+        ]
+    },
+    "day_background": {
+        "frames_list": [
+            pygame.FRect(
+                TILE_SIZE * 12,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE * 3
+            ),
+        ]
+    },
+    "green_actor": {
+        "frames_list": [
+            pygame.FRect(
+                0,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "grey_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 2,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 3,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "cyclop_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 4,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 5,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "yellow_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 6,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 7,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "spinner_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 8,
+                TILE_SIZE * 9,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+        ]
+    },
+    "blind_actor": {
+        "frames_list": [
+            pygame.FRect(
+                0,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "stomp_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 2,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 3,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "fish_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 4,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 5,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "red_roomba_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 6,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 7,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 8,
+                TILE_SIZE * 9 + BIG_TILE_SIZE,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "blue_roomba_actor": {
+        "frames_list": [
+            pygame.FRect(
+                0,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 2,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "big_blue_roomba actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 3,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 4,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 5,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+    "bat_actor": {
+        "frames_list": [
+            pygame.FRect(
+                BIG_TILE_SIZE * 6,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 7,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            ),
+            pygame.FRect(
+                BIG_TILE_SIZE * 8,
+                TILE_SIZE * 9 + BIG_TILE_SIZE * 2,
+                BIG_TILE_SIZE,
+                BIG_TILE_SIZE
+            )
+        ]
+    },
+}
+
+GRASS_BLOCK_AUTOTILE_BITMASK = {
+    (
+        (0, 0, 0),
+        (1, 1, 0),
+        (1, 1, 0)
+    ): 0,
+    (
+        (0, 0, 0),
+        (1, 1, 1),
+        (1, 1, 1)
+    ): 1,
+    (
+        (0, 0, 0),
+        (0, 1, 1),
+        (0, 1, 1)
+    ): 2,
+    (
+        (0, 0, 0),
+        (0, 1, 0),
+        (0, 1, 0)
+    ): 3,
+    (
+        (0, 0, 0),
+        (1, 1, 0),
+        (0, 0, 0)
+    ): 4,
+    (
+        (0, 0, 0),
+        (1, 1, 1),
+        (0, 0, 0)
+    ): 5,
+    (
+        (0, 0, 0),
+        (0, 1, 1),
+        (0, 0, 0)
+    ): 6,
+    (
+        (0, 0, 0),
+        (0, 1, 0),
+        (0, 0, 0)
+    ): 7,
+    (
+        (1, 1, 1),
+        (1, 1, 1),
+        (1, 1, 1)
+    ): 8,  # 14
+    (
+        (1, 1, 0),
+        (1, 1, 0),
+        (0, 0, 0)
+    ): 9,
+    (
+        (1, 1, 1),
+        (1, 1, 1),
+        (0, 0, 0)
+    ): 10,
+    (
+        (0, 1, 1),
+        (0, 1, 1),
+        (0, 0, 0)
+    ): 11,
+    (
+        (0, 1, 0),
+        (0, 1, 0),
+        (0, 0, 0)
+    ): 12,
+    (
+        (1, 1, 0),
+        (1, 1, 0),
+        (1, 1, 0)
+    ): 13,
+    (
+        (0, 1, 1),
+        (0, 1, 1),
+        (0, 1, 1)
+    ): 15,
+    (
+        (0, 1, 0),
+        (0, 1, 0),
+        (0, 1, 0)
+    ): 16,
+    (
+        (1, 1, 1),
+        (1, 1, 1),
+        (1, 1, 0)
+    ): 17,
+    (
+        (1, 1, 1),
+        (1, 1, 1),
+        (0, 1, 1)
+    ): 18,
+    (
+        (1, 1, 0),
+        (1, 1, 1),
+        (1, 1, 1)
+    ): 19,
+    (
+        (0, 1, 1),
+        (1, 1, 1),
+        (1, 1, 1)
+    ): 20,
+}
+
+pygame.init()
+clock = pygame.time.Clock()
+native_surface = pygame.Surface(NATIVE_SIZE)
+window_surface = pygame.display.set_mode(WINDOW_SIZE)
+is_debug = False
+
+
+class Sprite(pygame.sprite.Sprite):
+    def __init__(self, groups, sprite_sheet_surface, position, real_rect, frames_list):
+        super().__init__(groups)
+        self.image = sprite_sheet_surface
+        # Rect around whole sprite sheet-
+        self.rect = self.image.get_frect(topleft=position)
+        self.real_rect = real_rect  # Rect around sprite region
+        self.real_rect.topleft = self.rect.topleft
+        self.frames_list = frames_list
+        self.frame_index = 0
+
+
+class Group(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+
+    def draw(self, native_surface, camera_rect):
+        for sprite in self:
+            sprite.real_rect.topleft = sprite.rect.topleft
+            sprite_rect_render_position = (
+                sprite.rect.left - camera_rect.left,
+                sprite.rect.top - camera_rect.top
+            )
+            # Frames are regions
+            sprite_region = sprite.frames_list[sprite.frame_index]
+            native_surface.blit(
+                sprite.image,
+                sprite_rect_render_position,
+                sprite_region,
+            )
+
+            if is_debug:
+                # Draw collision rect
+                pygame.draw.rect(
+                    native_surface,
+                    "red",
+                    pygame.FRect(
+                        sprite_rect_render_position[0],
+                        sprite_rect_render_position[1],
+                        sprite.real_rect.width,
+                        sprite.real_rect.height,
+                    ),
+                    1
+                )
+
+
+class LevelEditor():
+    def __init__(self):
+        # One scene one sprite sheet
+        self.sprite_sheet_surface = pygame.image.load(
+            SPRITE_SHEET_PATH
+        ).convert_alpha()
+
+        # One scene can have many fonts
+        self.cg_pixel_3x5_font = pygame.font.Font(
+            CG_PIXEL_3x5_FONT_PATH, CG_PIXEL_3x5_FONT_HEIGHT
+        )
+
+        # Groups
+        self.group_1 = Group()
+
+        # Things are drawn relative to this
+        self.camera_rect = pygame.FRect(
+            0,
+            0,
+            NATIVE_WIDTH,
+            NATIVE_HEIGHT
+        )
+
+    def input(self, event):
+        pass
+        # if event.type == pygame.MOUSEBUTTONDOWN:
+        # mouse_window_position = pygame.mouse.get_pos()
+        # mouse_native_render_grid_snapped = (
+        #     ((mouse_window_position[0] // RESOLUTION_SCALE) +
+        #      self.camera_rect.left) // TILE_SIZE * TILE_SIZE,
+        #     ((mouse_window_position[1] // RESOLUTION_SCALE) +
+        #      self.camera_rect.top) // TILE_SIZE * TILE_SIZE
+        # )
+        # Sprite(
+        #     self.group_1,
+        #     self.sprite_sheet_surface,
+        #     mouse_native_render_grid_snapped,
+        #     pygame.FRect(
+        #         0,
+        #         0,
+        #         TILE_SIZE,
+        #         TILE_SIZE
+        #     ),
+        #     SPRITE_SHEET_DATA["grass_block"]["frames_list"]
+        # )
+        # for sprite in self.group_1:
+        #     mask = [
+        #         [0, 0, 0],
+        #         [0, 1, 0],
+        #         [0, 0, 0]
+        #     ]
+        #     for other in self.group_1:
+        #         dx = (other.real_rect.x - sprite.real_rect.x) // TILE_SIZE
+        #         dy = (other.real_rect.y - sprite.real_rect.y) // TILE_SIZE
+        #         possible_neighbour_positions = [
+        #             [(-1, -1), (0, -1), (1, -1),],
+        #             [(-1, 0), (0, 0), (1, 0),],
+        #             [(-1, 1), (0, 1), (1, 1)]
+        #         ]
+        #         for y, row in enumerate(possible_neighbour_positions):
+        #             for x, possible_position in enumerate(row):
+        #                 if possible_position == (dx, dy):
+        #                     mask[y][x] = 1
+        #     # handle TL
+        #     if mask[0][0] == 1:
+        #         if mask[0][1] == 0 or mask[1][0] == 0:
+        #             mask[0][0] = 0
+        #     # handle TR
+        #     if mask[0][2] == 1:
+        #         if mask[0][1] == 0 or mask[1][2] == 0:
+        #             mask[0][2] = 0
+        #     # handle BL
+        #     if mask[2][0] == 1:
+        #         if mask[1][0] == 0 or mask[2][1] == 0:
+        #             mask[2][0] = 0
+        #     # handle BR
+        #     if mask[2][2] == 1:
+        #         if mask[1][2] == 0 or mask[2][1] == 0:
+        #             mask[2][2] = 0
+
+        #     tuple_key = tuple(map(tuple, mask))
+        #     frame_index = GRASS_BLOCK_AUTOTILE_BITMASK.get(tuple_key, 0)
+        #     sprite.frame_index = frame_index
+
+        # elif event.type == pygame.KEYDOWN:
+        #     if event.key == pygame.K_RIGHT:
+        #         self.tile.frame_index += 1
+
+    def update(self, native_surface, dt):
+        key_is_pressed = pygame.key.get_pressed()
+        direction_x = key_is_pressed[pygame.K_RIGHT] - \
+            key_is_pressed[pygame.K_LEFT]
+        direction_y = key_is_pressed[pygame.K_DOWN] - \
+            key_is_pressed[pygame.K_UP]
+
+        self.camera_rect.left += direction_x
+        self.camera_rect.top += direction_y
+
+        native_surface.fill("black")
+
+        # Vertical lines
+        nw = NATIVE_WIDTH + 1
+        for i in range(NATIVE_WIDTH_TILES):
+            x = ((i * TILE_SIZE) - self.camera_rect.left) % nw
+            pygame.draw.line(
+                native_surface,
+                "grey5",
+                (x, 0),
+                (x, NATIVE_HEIGHT)
+            )
+
+        # Horizontal lines
+        nh = NATIVE_HEIGHT + 1
+        for i in range(NATIVE_HEIGHT_TILES):
+            y = ((i * TILE_SIZE) - self.camera_rect.top) % nh
+            pygame.draw.line(
+                native_surface,
+                "grey5",
+                (0, y),
+                (NATIVE_WIDTH, y)
+            )
+
+        x = (-self.camera_rect.left) % (nw)
+        pygame.draw.line(
+            native_surface,
+            "grey15",
+            (x, 0),
+            (x, NATIVE_HEIGHT)
+        )
+
+        y = (-self.camera_rect.top) % (nh)
+        pygame.draw.line(
+            native_surface,
+            "grey15",
+            (0, y),
+            (NATIVE_WIDTH, y)
+        )
+
+        pygame.draw.circle(
+            native_surface,
+            "red",
+            (-self.camera_rect.x, -self.camera_rect.y),
+            2
+        )
+
+        vertical_line_index_surface = self.cg_pixel_3x5_font.render(
+            str(int((x % NATIVE_WIDTH + self.camera_rect.x)//(nw))),
+            False,
+            "white"
+        )
+        vertical_line_index_rect = vertical_line_index_surface.get_frect(
+            left=x)
+        native_surface.blit(
+            vertical_line_index_surface,
+            vertical_line_index_rect
+        )
+
+        horizontal_line_index_surface = self.cg_pixel_3x5_font.render(
+            str(int((y % NATIVE_HEIGHT + self.camera_rect.y) // (NATIVE_HEIGHT-1))),
+            False,
+            "white"
+        )
+        horizontal_line_index_rect = horizontal_line_index_surface.get_frect(
+            top=y)
+        native_surface.blit(
+            horizontal_line_index_surface,
+            horizontal_line_index_rect
+        )
+
+        self.group_1.draw(native_surface, self.camera_rect)
+
+        if pygame.mouse.get_pressed()[0]:
+            mouse_window_position = pygame.mouse.get_pos()
+            mouse_native_render_grid_snapped = (
+                ((mouse_window_position[0] // RESOLUTION_SCALE) +
+                 self.camera_rect.left) // TILE_SIZE * TILE_SIZE,
+                ((mouse_window_position[1] // RESOLUTION_SCALE) +
+                 self.camera_rect.top) // TILE_SIZE * TILE_SIZE
+            )
+            Sprite(
+                self.group_1,
+                self.sprite_sheet_surface,
+                mouse_native_render_grid_snapped,
+                pygame.FRect(
+                    0,
+                    0,
+                    TILE_SIZE,
+                    TILE_SIZE
+                ),
+                SPRITE_SHEET_DATA["grass_block"]["frames_list"]
+            )
+            for sprite in self.group_1:
+                mask = [
+                    [0, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 0]
+                ]
+                for other in self.group_1:
+                    dx = (other.real_rect.x - sprite.real_rect.x) // TILE_SIZE
+                    dy = (other.real_rect.y - sprite.real_rect.y) // TILE_SIZE
+                    possible_neighbour_positions = [
+                        [(-1, -1), (0, -1), (1, -1),],
+                        [(-1, 0), (0, 0), (1, 0),],
+                        [(-1, 1), (0, 1), (1, 1)]
+                    ]
+                    for y, row in enumerate(possible_neighbour_positions):
+                        for x, possible_position in enumerate(row):
+                            if possible_position == (dx, dy):
+                                mask[y][x] = 1
+                # handle TL
+                if mask[0][0] == 1:
+                    if mask[0][1] == 0 or mask[1][0] == 0:
+                        mask[0][0] = 0
+                # handle TR
+                if mask[0][2] == 1:
+                    if mask[0][1] == 0 or mask[1][2] == 0:
+                        mask[0][2] = 0
+                # handle BL
+                if mask[2][0] == 1:
+                    if mask[1][0] == 0 or mask[2][1] == 0:
+                        mask[2][0] = 0
+                # handle BR
+                if mask[2][2] == 1:
+                    if mask[1][2] == 0 or mask[2][1] == 0:
+                        mask[2][2] = 0
+
+                tuple_key = tuple(map(tuple, mask))
+                frame_index = GRASS_BLOCK_AUTOTILE_BITMASK.get(tuple_key, 0)
+                sprite.frame_index = frame_index
+
+
+current_scene = LevelEditor()
+
+while 1:
+    dt = clock.tick(FPS) / 1000
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        current_scene.input(event)
+
+    is_debug = pygame.key.get_pressed()[pygame.K_p]
+
+    current_scene.update(native_surface, dt)
+
+    pygame.transform.scale_by(native_surface, RESOLUTION_SCALE, window_surface)
+    pygame.display.update()

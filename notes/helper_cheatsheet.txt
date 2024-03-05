@@ -1,0 +1,30 @@
+def wrap_range(input, left_limit, right_limit):
+    return (input - left_limit) % (right_limit - left_limit + 1) + left_limit
+
+
+def window_position_to_native_position(position):
+    return (
+        position[0] // RESOLUTION_SCALE,
+        position[1] // RESOLUTION_SCALE
+    )
+
+
+def snap_position_to_grid(position, block_tile_size):
+    return (
+        position[0] // block_tile_size * block_tile_size,
+        position[1] // block_tile_size * block_tile_size
+    )
+
+
+def position_sub_camera(position, camera_rect):
+    return (
+        position[0] - camera_rect.left,
+        position[1] - camera_rect.top
+    )
+
+
+def position_add_camera(position, camera_rect):
+    return (
+        position[0] + camera_rect.left,
+        position[1] + camera_rect.top
+    )
