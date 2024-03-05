@@ -38,9 +38,6 @@ class Sprite(pygame.sprite.Sprite):
         self.real_rect.topleft = self.rect.topleft
         self.frames_list = frames_list
         self.frame_index = 0
-        # Debug
-        self.mask = None
-        self.mask_id = 0
 
 
 class Group(pygame.sprite.Group):
@@ -64,55 +61,6 @@ class Group(pygame.sprite.Group):
                 sprite_rect_render_position,
                 sprite_frame_region,
             )
-            if is_debug:
-                # Draw real rect
-                pygame.draw.rect(
-                    native_surface,
-                    "red",
-                    pygame.FRect(
-                        sprite_rect_render_position[0],
-                        sprite_rect_render_position[1],
-                        sprite.real_rect.width,
-                        sprite.real_rect.height,
-                    ),
-                    1
-                )
-                # Draw mask id
-                text_surface = font.render(
-                    str(sprite.mask_id),
-                    False,
-                    "white"
-                )
-                text_rect = text_surface.get_frect(
-                    bottomleft=sprite_rect_render_position
-                )
-                native_surface.blit(
-                    text_surface,
-                    text_rect
-                )
-                # Draw mask
-                mask_surf = pygame.Surface((TILE_SIZE, TILE_SIZE))
-                mask_surf.set_alpha(100)
-                bit_size = TILE_SIZE//3
-                for bit_y, row in enumerate(sprite.mask):
-                    for bit_x, m in enumerate(row):
-                        if m == 1:
-                            pygame.draw.rect(
-                                mask_surf,
-                                "white",
-                                (
-                                    bit_x * bit_size,
-                                    bit_y * bit_size,
-                                    bit_size,
-                                    bit_size
-                                )
-                            )
-                native_surface.blit(
-                    mask_surf, (
-                        sprite_rect_render_position[0],
-                        sprite_rect_render_position[1]
-                    )
-                )
 
 
 class LevelEditor():
@@ -133,7 +81,7 @@ class LevelEditor():
                 frect_frames_list.append(pygame.FRect(frect))
             sprite_data["frames_list"] = frect_frames_list
         self.sprite_sheet_data = json_data
-        self.grass_block_bitmasks = {
+        self.sprite_sheet_data["grass_block"]["bitmasks"] = {
             int(key): value for key, value in self.sprite_sheet_data["grass_block"]["bitmasks"].items()
         }
         # Groups
@@ -200,14 +148,9 @@ class LevelEditor():
                 bl = bl and b and l
                 mask_id = (br << 7) | (b << 6) | (bl << 5) | (
                     r << 4) | (l << 3) | (tr << 2) | (t << 1) | tl
-                this.mask_id = mask_id
-                mask = [
-                    [tl, t, tr],
-                    [l, 1, r],
-                    [bl, b, br]
-                ]
-                this.mask = mask
-                this.frame_index = self.grass_block_bitmasks[mask_id]
+                if mask_id not in self.sprite_sheet_data["grass_block"]["bitmasks"]:
+                    mask_id = 0
+                this.frame_index = self.sprite_sheet_data["grass_block"]["bitmasks"][mask_id]
 
     def update(self, native_surface, dt):
         # Arrow keys direction
