@@ -7,7 +7,7 @@ FPS = 30
 NATIVE_WIDTH = 432
 NATIVE_HEIGHT = 288
 NATIVE_SIZE = (NATIVE_WIDTH, NATIVE_HEIGHT)
-RESOLUTION_SCALE = 2
+RESOLUTION_SCALE = 3
 WINDOW_WIDTH = NATIVE_WIDTH * RESOLUTION_SCALE
 WINDOW_HEIGHT = NATIVE_HEIGHT * RESOLUTION_SCALE
 WINDOW_SIZE = (WINDOW_WIDTH, WINDOW_HEIGHT)
@@ -159,7 +159,7 @@ class LevelEditor():
             Group()
         ]
         # Collect min3 autotile
-        self.min3_sprite_groups = [
+        self.autotile_sprite_groups = [
             []
         ]
         self.group_index = 0
@@ -289,6 +289,8 @@ class LevelEditor():
                 self.is_d_pressed = False
 
         # Mouse
+        if event.type == pygame.MOUSEWHEEL:
+            self.menu_position_x_offset += event.y * TILE_SIZE
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position
             mouse_global = (
@@ -312,7 +314,7 @@ class LevelEditor():
                     if len(self.groups) == 15:
                         return
                     self.groups.append(Group())
-                    self.min3_sprite_groups.append([])
+                    self.autotile_sprite_groups.append([])
                     self.group_buttons_dicts_list_append()
                     self.group_index = 0
                     self.is_lmb_pressed = False
@@ -323,7 +325,7 @@ class LevelEditor():
                     if len(self.groups) == 1:
                         return
                     self.groups.pop()
-                    self.min3_sprite_groups.pop()
+                    self.autotile_sprite_groups.pop()
                     self.group_buttons_dicts_list.pop()
                     self.group_index = 0
                     self.is_lmb_pressed = False
@@ -433,13 +435,14 @@ class LevelEditor():
             sprite.frame_index = self.menu_frame_index
 
             # Add new sprite to lookup table
-            if self.menu_name in ("grass_block", "dirt_block", "snow_block"):
-                self.min3_sprite_groups[self.group_index].append(
+            # TODO: If i do not separate, even if the mask are all the same but then not all of them have the same amount of frames, so may get out of index
+            if self.menu_name in ("grass_block", "dirt_block", "snow_block", "blue_pipe", "tree_branch", "tree_leaves", "big_mushroom", "water_fall", "water", "ladder", "rope", "flag", "cloud", "stone"):
+                self.autotile_sprite_groups[self.group_index].append(
                     sprite
                 )
 
                 # Autotile check
-                self.update_min3_bitmasks(sprite)
+                self.update_bitmasks(sprite)
         # Rmb
         if self.is_rmb_pressed:
             # Get mouse position
@@ -469,9 +472,9 @@ class LevelEditor():
             if sprite_index != -1:
                 sprite = group.sprites()[sprite_index]
                 # A min3?
-                if self.menu_name in ("grass_block", "dirt_block", "snow_block"):
+                if self.menu_name in ("grass_block", "dirt_block", "snow_block", "blue_pipe", "tree_branch", "tree_leaves", "big_mushroom", "water_fall", "water", "ladder", "rope", "flag", "cloud", "stone"):
                     # Hold reference
-                    min3_sprite_group = self.min3_sprite_groups[
+                    min3_sprite_group = self.autotile_sprite_groups[
                         self.group_index
                     ]
 
@@ -484,7 +487,7 @@ class LevelEditor():
                     )
                     for index in index_lists:
                         other = min3_sprite_group[index]
-                        self.update_min3_bitmasks(other, last=True)
+                        self.update_bitmasks(other, last=True)
 
                 # Remove sprite from group
                 sprite.kill()
@@ -654,7 +657,7 @@ class LevelEditor():
             }
         )
 
-    def update_min3_bitmasks(self, this, last=False):
+    def update_bitmasks(self, this, last=False):
         # Get this sprite bitmasks dict
         current_min3_bitmasks_dict = self.sprite_sheet_data[self.menu_name]["bitmasks"]
 
@@ -662,15 +665,15 @@ class LevelEditor():
         br, b, bl, r, l, tr, t, tl = 0, 0, 0, 0, 0, 0, 0, 0
 
         # Find neighbors - (current layer)
-        min3_sprites_list = self.min3_sprite_groups[self.group_index]
-        min3_sprites_list = [
-            sprite for sprite in min3_sprites_list if sprite.rect.topleft != this.rect.topleft
+        autotile_sprites_list = self.autotile_sprite_groups[self.group_index]
+        autotile_sprites_list = [
+            sprite for sprite in autotile_sprites_list if sprite.rect.topleft != this.rect.topleft
         ]
-        min3_rects_list = [
-            sprite.frame_rect for sprite in min3_sprites_list if sprite.rect.topleft != this.rect.topleft
+        autotile_rects_list = [
+            sprite.frame_rect for sprite in autotile_sprites_list if sprite.rect.topleft != this.rect.topleft
         ]
         neigbour_indexes_list = this.inflate_rect.collidelistall(
-            min3_rects_list  # If you use sprite here it uses the big rect instead
+            autotile_rects_list  # If you use sprite here it uses the big rect instead
         )
 
         # No neighbors? return
@@ -680,7 +683,7 @@ class LevelEditor():
 
         # Cook bitmask with neighbour
         for neigbour_index in neigbour_indexes_list:
-            neighbour = min3_sprites_list[neigbour_index]
+            neighbour = autotile_sprites_list[neigbour_index]
             if neighbour.rect.topleft == this.rect.topleft:
                 continue
             dx = neighbour.rect.x - this.rect.x
@@ -711,8 +714,8 @@ class LevelEditor():
         # Tell my neighbour to update their frame index - (current layer)
         if last == False:
             for neigbour_index in neigbour_indexes_list:
-                neighbour = min3_sprites_list[neigbour_index]
-                self.update_min3_bitmasks(neighbour, last=True)
+                neighbour = autotile_sprites_list[neigbour_index]
+                self.update_bitmasks(neighbour, last=True)
                 # TODO: Vary fill later when reading save data: if this.frame_index == 8: this.frame_index = random.choice([8, 14])
 
 
