@@ -41,6 +41,8 @@ class Sprite(pygame.sprite.Sprite):
         self.frames_list = frames_list
         self.frame_index = 0
         self.inflate_rect = self.frame_rect.inflate(TILE_SIZE, TILE_SIZE)
+        # Debug
+        self.mask = 0
 
 
 class Group(pygame.sprite.Group):
@@ -69,12 +71,37 @@ class Group(pygame.sprite.Group):
                 sprite_frame_region,
             )
             if is_debug:
-                # Draw frame rect
+                # Draw frame rect global
+                # pygame.draw.rect(
+                #     native_surface,
+                #     "red",
+                #     sprite.frame_rect,
+                #     1
+                # )
+
+                # Draw frame rect in_game
                 pygame.draw.rect(
                     native_surface,
                     "red",
-                    sprite.frame_rect,
+                    pygame.Rect(
+                        sprite_rect_render_position[0],
+                        sprite_rect_render_position[1],
+                        TILE_SIZE,
+                        TILE_SIZE
+                    ),
                     1
+                )
+                mask_surface = font.render(
+                    f"{sprite.mask}",
+                    False,
+                    "white"
+                )
+                group_text_rect = mask_surface.get_rect(
+                    bottomleft=sprite_rect_render_position
+                )
+                native_surface.blit(
+                    mask_surface,
+                    group_text_rect,
                 )
 
 
@@ -677,6 +704,9 @@ class LevelEditor():
 
         # Update frame index with cooked bitmask
         this.frame_index = current_min3_bitmasks_dict[mask_id]
+
+        # Debug
+        this.mask = mask_id
 
         # Tell my neighbour to update their frame index - (current layer)
         if last == False:
