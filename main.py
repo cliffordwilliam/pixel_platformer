@@ -38,6 +38,7 @@ class Sprite(pygame.sprite.Sprite):
         self.real_rect.topleft = self.rect.topleft
         self.frames_list = frames_list
         self.frame_index = 0
+        self.inflate_rect = self.real_rect.inflate(TILE_SIZE, TILE_SIZE)
 
 
 class Group(pygame.sprite.Group):
@@ -48,6 +49,7 @@ class Group(pygame.sprite.Group):
         for sprite in self:
             # Bring real rect to rect
             sprite.real_rect.topleft = sprite.rect.topleft
+            sprite.inflate_rect.center = sprite.real_rect.center
             # Get render position
             sprite_rect_render_position = (
                 sprite.rect.x - camera_rect.x,
@@ -61,6 +63,14 @@ class Group(pygame.sprite.Group):
                 sprite_rect_render_position,
                 sprite_frame_region,
             )
+            # Debug
+            if is_debug:
+                pygame.draw.rect(
+                    native_surface,
+                    "red",
+                    sprite.inflate_rect,
+                    1
+                )
 
 
 class LevelEditor():
@@ -97,7 +107,7 @@ class LevelEditor():
             NATIVE_HEIGHT
         )
         # Autotile lookup table
-        self.autotile_positions_groups = [
+        self.autotile_real_rects_groups = [
             []
         ]
         # Create add group button
@@ -150,7 +160,7 @@ class LevelEditor():
                     if len(self.groups) == 15:
                         return
                     self.groups.append(Group())
-                    self.autotile_positions_groups.append([])
+                    self.autotile_real_rects_groups.append([])
                     self.create_add_group_button()
                     return
                 # On add group button click
@@ -158,7 +168,7 @@ class LevelEditor():
                     if len(self.groups) == 1:
                         return
                     self.groups.pop()
-                    self.autotile_positions_groups.pop()
+                    self.autotile_real_rects_groups.pop()
                     self.group_buttons_data_list.pop()
                     self.current_group_index = 0
                     return
@@ -172,7 +182,7 @@ class LevelEditor():
                     if sprite.rect.topleft == mouse_native_grid_snapped:
                         return
                 # Instance tile on mouse click
-                Sprite(
+                sprite = Sprite(
                     self.groups[self.current_group_index],
                     self.sprite_sheet_surface,
                     mouse_native_grid_snapped,
@@ -185,11 +195,11 @@ class LevelEditor():
                     self.sprite_sheet_data["grass_block"]["frames_list"]
                 )
                 # Add to lookup table
-                self.autotile_positions_groups[self.current_group_index].append(
-                    mouse_native_grid_snapped
+                self.autotile_real_rects_groups[self.current_group_index].append(
+                    sprite
                 )
                 # Autotile check
-                self.update_tile_bitmasks()
+                self.update_tile_bitmasks(sprite)
 
             # Right click
             if event.button == 3:
@@ -197,11 +207,11 @@ class LevelEditor():
                     if sprite.rect.topleft == mouse_native_grid_snapped:
                         sprite.kill()
                         # Remove from lookup table
-                        self.autotile_positions_groups[self.current_group_index].remove(
-                            mouse_native_grid_snapped
+                        self.autotile_real_rects_groups[self.current_group_index].remove(
+                            sprite.real_rect
                         )
                         # Autotile check
-                        self.update_tile_bitmasks()
+                        # self.update_tile_bitmasks(sprite)
                         return
 
     def update(self, native_surface, dt):
@@ -327,47 +337,46 @@ class LevelEditor():
             }
         )
 
-    def update_tile_bitmasks(self):
+    def update_tile_bitmasks(self, this):
         # Check each tile
-        for this in self.groups[self.current_group_index]:
-            # Compare this tile with everyone else to find neighbours
-            br, b, bl, r, l, tr, t, tl = 0, 0, 0, 0, 0, 0, 0, 0
-            # Neighboring offsets
-            this_neighbour_positions_list = [
-                (this.rect.x - TILE_SIZE, this.rect.y - TILE_SIZE),
-                (this.rect.x, this.rect.y - TILE_SIZE),
-                (this.rect.x + TILE_SIZE, this.rect.y - TILE_SIZE),
-                (this.rect.x - TILE_SIZE, this.rect.y),
-                (this.rect.x, this.rect.y),
-                (this.rect.x + TILE_SIZE, this.rect.y),
-                (this.rect.x - TILE_SIZE, this.rect.y + TILE_SIZE),
-                (this.rect.x, this.rect.y + TILE_SIZE),
-                (this.rect.x + TILE_SIZE, this.rect.y + TILE_SIZE),
-            ]
-            # Check neighboring tiles in lookup table
-            for neighbour_position in this_neighbour_positions_list:
-                if neighbour_position in self.autotile_positions_groups[self.current_group_index]:
-                    dx = neighbour_position[0] - this.rect.x
-                    dy = neighbour_position[1] - this.rect.y
-                    # This other is too far, find someone else
-                    if abs(dx) > TILE_SIZE or abs(dy) > TILE_SIZE:
-                        continue
-                    t += dx == 0 and dy == -TILE_SIZE
-                    r += dx == TILE_SIZE and dy == 0
-                    b += dx == 0 and dy == TILE_SIZE
-                    l += dx == -TILE_SIZE and dy == 0
-                    br += dx == TILE_SIZE and dy == TILE_SIZE
-                    bl += dx == -TILE_SIZE and dy == TILE_SIZE
-                    tr += dx == TILE_SIZE and dy == -TILE_SIZE
-                    tl += dx == -TILE_SIZE and dy == -TILE_SIZE
-            tr = tr and t and r
-            tl = tl and t and l
-            br = br and b and r
-            bl = bl and b and l
-            mask_id = (br << 7) | (b << 6) | (bl << 5) | (
-                r << 4) | (l << 3) | (tr << 2) | (t << 1) | tl
-            this.frame_index = self.sprite_sheet_data["grass_block"]["bitmasks"][mask_id]
-            # TODO: Vary fill later when reading save data: if this.frame_index == 8: this.frame_index = random.choice([8, 14])
+        # for this in self.groups[self.current_group_index]:
+        # Compare this tile with everyone else to find neighbours
+        br, b, bl, r, l, tr, t, tl = 0, 0, 0, 0, 0, 0, 0, 0
+        this_group_autotile_real_rects = self.autotile_real_rects_groups[self.current_group_index]
+        index_lists = this.inflate_rect.collidelistall(
+            this_group_autotile_real_rects
+        )
+        for index in index_lists:
+            other = this_group_autotile_real_rects[index]
+            # Myself? find someone else
+            if other.rect.topleft == this.rect.topleft:
+                continue
+            dx = other.rect.x - this.rect.x
+            dy = other.rect.y - this.rect.y
+            # This other is too far, find someone else
+            if abs(dx) > TILE_SIZE or abs(dy) > TILE_SIZE:
+                continue
+            t += dx == 0 and dy == -TILE_SIZE
+            r += dx == TILE_SIZE and dy == 0
+            b += dx == 0 and dy == TILE_SIZE
+            l += dx == -TILE_SIZE and dy == 0
+            br += dx == TILE_SIZE and dy == TILE_SIZE
+            bl += dx == -TILE_SIZE and dy == TILE_SIZE
+            tr += dx == TILE_SIZE and dy == -TILE_SIZE
+            tl += dx == -TILE_SIZE and dy == -TILE_SIZE
+        tr = tr and t and r
+        tl = tl and t and l
+        br = br and b and r
+        bl = bl and b and l
+        mask_id = (br << 7) | (b << 6) | (bl << 5) | (
+            r << 4) | (l << 3) | (tr << 2) | (t << 1) | tl
+        old = this.frame_index
+        this.frame_index = self.sprite_sheet_data["grass_block"]["bitmasks"][mask_id]
+        if old != this.frame_index:
+            for index in index_lists:
+                other = this_group_autotile_real_rects[index]
+                self.update_tile_bitmasks(other)
+        # TODO: Vary fill later when reading save data: if this.frame_index == 8: this.frame_index = random.choice([8, 14])
 
 
 current_scene = LevelEditor()
