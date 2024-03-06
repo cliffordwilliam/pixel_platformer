@@ -18,6 +18,7 @@ NATIVE_HEIGHT_TILES = NATIVE_HEIGHT // TILE_SIZE
 NATIVE_SIZE_TILES = (NATIVE_WIDTH_TILES, NATIVE_HEIGHT_TILES)
 CG_PIXEL_3x5_FONT_PATH = path.join('fonts', 'cg-pixel-3x5.ttf')
 CG_PIXEL_3x5_FONT_HEIGHT = 5
+GRID_PNG_PATH = path.join('images', 'grid.png')
 SPRITE_SHEET_PNG_PATH = path.join('images', 'sprite_sheet.png')
 SPRITE_SHEET_DATA_PATH = path.join('data', 'sprite_sheet.json')
 
@@ -63,22 +64,27 @@ class Group(pygame.sprite.Group):
                 sprite_rect_render_position,
                 sprite_frame_region,
             )
-            # Debug
-            if is_debug:
-                pygame.draw.rect(
-                    native_surface,
-                    "red",
-                    sprite.inflate_rect,
-                    1
-                )
 
 
 class LevelEditor():
     def __init__(self):
+        # Input flags
+        self.is_right_pressed = False
+        self.is_left_pressed = False
+        self.is_down_pressed = False
+        self.is_up_pressed = False
+
         # One scene one sprite sheet
         self.sprite_sheet_surface = pygame.image.load(
             SPRITE_SHEET_PNG_PATH
         ).convert_alpha()
+
+        # Special grid surface
+        self.grid_surface = pygame.image.load(
+            GRID_PNG_PATH
+        ).convert_alpha()
+        self.grid_rect = self.grid_surface.get_rect()
+
         # Load this sprite sheet data and store it
         with open(SPRITE_SHEET_DATA_PATH, 'r') as file:
             json_data = json.load(file)
@@ -94,11 +100,13 @@ class LevelEditor():
         self.sprite_sheet_data["grass_block"]["bitmasks"] = {
             int(key): value for key, value in self.sprite_sheet_data["grass_block"]["bitmasks"].items()
         }
+
         # Groups
         self.groups = [
             Group()
         ]
         self.current_group_index = 0
+
         # Things are drawn relative to this
         self.camera_rect = pygame.Rect(
             0,
@@ -106,10 +114,12 @@ class LevelEditor():
             NATIVE_WIDTH,
             NATIVE_HEIGHT
         )
+
         # Autotile lookup table
         self.autotile_real_rects_groups = [
             []
         ]
+
         # Create add group button
         self.add_group_button_rect = pygame.Rect(
             NATIVE_WIDTH - TILE_SIZE,
@@ -125,6 +135,7 @@ class LevelEditor():
         self.add_group_button_text_rect = self.add_group_button_text_surface.get_rect(
             center=self.add_group_button_rect.center
         )
+
         # Create del group button
         self.del_group_button_rect = pygame.Rect(
             NATIVE_WIDTH - TILE_SIZE * 2,
@@ -140,31 +151,67 @@ class LevelEditor():
         self.del_group_button_text_rect = self.del_group_button_text_surface.get_rect(
             center=self.del_group_button_rect.center
         )
+
         # Group button
         self.group_buttons_data_list = []
         self.create_add_group_button()
 
     def input(self, event):
+        # Key
+        if event.type == pygame.KEYDOWN:
+            # Right
+            if event.key == pygame.K_RIGHT:
+                self.is_right_pressed = True
+            # Left
+            if event.key == pygame.K_LEFT:
+                self.is_left_pressed = True
+            # Down
+            if event.key == pygame.K_DOWN:
+                self.is_down_pressed = True
+            # Up
+            if event.key == pygame.K_UP:
+                self.is_up_pressed = True
+        elif event.type == pygame.KEYUP:
+            # Right
+            if event.key == pygame.K_RIGHT:
+                self.is_right_pressed = False
+            # Left
+            if event.key == pygame.K_LEFT:
+                self.is_left_pressed = False
+            # Down
+            if event.key == pygame.K_DOWN:
+                self.is_down_pressed = False
+            # Up
+            if event.key == pygame.K_UP:
+                self.is_up_pressed = False
+
+        # Mouse
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Get mouse position
-            mouse_native_grid_snapped = (
-                ((event.pos[0] // RESOLUTION_SCALE) +
-                    self.camera_rect.x) // TILE_SIZE * TILE_SIZE,
-                ((event.pos[1] // RESOLUTION_SCALE) +
-                    self.camera_rect.y) // TILE_SIZE * TILE_SIZE
+            mouse_scaled_global = (
+                event.pos[0] // RESOLUTION_SCALE,
+                event.pos[1] // RESOLUTION_SCALE
             )
+            mouse_scaled_snapped_in_game = (``
+                (mouse_scaled_global[0] +
+                 self.camera_rect.x) // TILE_SIZE * TILE_SIZE,
+                (mouse_scaled_global[1] +
+                 self.camera_rect.y) // TILE_SIZE * TILE_SIZE
+            )
+
             # Left click
             if event.button == 1:
                 # On add group button click
-                if self.add_group_button_rect.collidepoint(mouse_native_grid_snapped):
+                if self.add_group_button_rect.collidepoint((mouse_scaled_global)):
                     if len(self.groups) == 15:
                         return
                     self.groups.append(Group())
                     self.autotile_real_rects_groups.append([])
                     self.create_add_group_button()
                     return
+
                 # On add group button click
-                if self.del_group_button_rect.collidepoint(mouse_native_grid_snapped):
+                if self.del_group_button_rect.collidepoint(mouse_scaled_global):
                     if len(self.groups) == 1:
                         return
                     self.groups.pop()
@@ -172,20 +219,23 @@ class LevelEditor():
                     self.group_buttons_data_list.pop()
                     self.current_group_index = 0
                     return
+
                 # On group button click
                 for button_data in self.group_buttons_data_list:
-                    if button_data["rect"].collidepoint(mouse_native_grid_snapped):
+                    if button_data["rect"].collidepoint(mouse_scaled_global):
                         self.current_group_index = button_data["index"]
                         return
 
+                # On grid click
                 for sprite in self.groups[self.current_group_index]:
-                    if sprite.rect.topleft == mouse_native_grid_snapped:
+                    if sprite.rect.topleft == mouse_scaled_snapped_in_game:
                         return
+
                 # Instance tile on mouse click
                 sprite = Sprite(
                     self.groups[self.current_group_index],
                     self.sprite_sheet_surface,
-                    mouse_native_grid_snapped,
+                    mouse_scaled_snapped_in_game,
                     pygame.Rect(
                         0,
                         0,
@@ -194,72 +244,83 @@ class LevelEditor():
                     ),
                     self.sprite_sheet_data["grass_block"]["frames_list"]
                 )
-                # Add to lookup table
+
+                # Add new sprite to lookup table
                 self.autotile_real_rects_groups[self.current_group_index].append(
                     sprite
                 )
+
                 # Autotile check
                 self.update_tile_bitmasks(sprite)
 
             # Right click
             if event.button == 3:
+                # On grid click
                 for sprite in self.groups[self.current_group_index]:
-                    if sprite.rect.topleft == mouse_native_grid_snapped:
-                        sprite.kill()
-                        # Remove from lookup table
-                        self.autotile_real_rects_groups[self.current_group_index].remove(
-                            sprite.real_rect
-                        )
+                    if sprite.rect.topleft == mouse_scaled_snapped_in_game:
+                        # Hold reference
+                        this_group_autotile_real_rects = self.autotile_real_rects_groups[
+                            self.current_group_index
+                        ]
+
+                        # Remove sprite from lookup table
+                        this_group_autotile_real_rects.remove(sprite)
+
                         # Autotile check
-                        # self.update_tile_bitmasks(sprite)
+                        index_lists = sprite.inflate_rect.collidelistall(
+                            this_group_autotile_real_rects
+                        )
+                        for index in index_lists:
+                            other = this_group_autotile_real_rects[index]
+                            self.update_tile_bitmasks(other, last=True)
+
+                        # Remove sprite from group
+                        sprite.kill()
                         return
 
     def update(self, native_surface, dt):
         # Arrow keys direction
-        key_is_pressed = pygame.key.get_pressed()
-        direction_x = key_is_pressed[pygame.K_RIGHT] - \
-            key_is_pressed[pygame.K_LEFT]
-        direction_y = key_is_pressed[pygame.K_DOWN] - \
-            key_is_pressed[pygame.K_UP]
+        direction_x = self.is_right_pressed - self.is_left_pressed
+        direction_y = self.is_down_pressed - self.is_up_pressed
+
         # Move camera with arrow keys
         self.camera_rect.x += direction_x
         self.camera_rect.y += direction_y
+
         # Clear
         native_surface.fill("black")
+
         # Grid
-        for i in range(NATIVE_WIDTH_TILES):
-            x = ((i * TILE_SIZE) - self.camera_rect.x) % NATIVE_WIDTH
-            y = ((i * TILE_SIZE) - self.camera_rect.y) % NATIVE_HEIGHT
-            pygame.draw.line(
-                native_surface,
-                "grey4",
-                (x, 0),
-                (x, NATIVE_HEIGHT)
-            )
-            pygame.draw.line(
-                native_surface,
-                "grey4",
-                (0, y),
-                (NATIVE_WIDTH, y)
-            )
+        grid_render_position = (
+            ((self.grid_rect.x - self.camera_rect.x) % TILE_SIZE) - TILE_SIZE,
+            ((self.grid_rect.y - self.camera_rect.y) % TILE_SIZE) - TILE_SIZE
+        )
+        native_surface.blit(
+            self.grid_surface,
+            grid_render_position
+        )
         x = (-self.camera_rect.x) % (NATIVE_WIDTH)
         pygame.draw.line(
             native_surface,
-            "grey8",
+            "grey6",
             (x, 0),
-            (x, NATIVE_HEIGHT)
+            (x, NATIVE_HEIGHT),
+            4
         )
         y = (-self.camera_rect.y) % (NATIVE_HEIGHT)
         pygame.draw.line(
             native_surface,
-            "grey8",
+            "grey6",
             (0, y),
-            (NATIVE_WIDTH, y)
+            (NATIVE_WIDTH, y),
+            4
         )
-        # Group
+
+        # Group render
         for group in self.groups:
             group.draw(native_surface, self.camera_rect)
-        # Add group button
+
+        # Add group button render
         pygame.draw.rect(
             native_surface,
             "white",
@@ -269,7 +330,8 @@ class LevelEditor():
             self.add_group_button_text_surface,
             self.add_group_button_text_rect
         )
-        # Del group button
+
+        # Del group button render
         pygame.draw.rect(
             native_surface,
             "black",
@@ -285,7 +347,8 @@ class LevelEditor():
             self.del_group_button_text_surface,
             self.del_group_button_text_rect
         )
-        # Group button
+
+        # Group button render
         for button_data in self.group_buttons_data_list:
             is_active = button_data["index"] == self.current_group_index
             pygame.draw.rect(
@@ -306,7 +369,10 @@ class LevelEditor():
             )
 
     def create_add_group_button(self):
+        # Get groups len
         len_groups = len(self.groups)
+
+        # Init button
         group_button_rect = pygame.Rect(
             NATIVE_WIDTH - TILE_SIZE * 2,
             TILE_SIZE,
@@ -327,6 +393,8 @@ class LevelEditor():
         group_button_text_rect = group_button_text_surface.get_rect(
             center=group_button_rect.center
         )
+
+        # Add button to collection
         self.group_buttons_data_list.append(
             {
                 "index": len_groups - 1,
@@ -337,23 +405,30 @@ class LevelEditor():
             }
         )
 
-    def update_tile_bitmasks(self, this):
-        # Check each tile
-        # for this in self.groups[self.current_group_index]:
-        # Compare this tile with everyone else to find neighbours
+    def update_tile_bitmasks(self, this, last=False):
+        # Get current data
+        current_autotile_bitmasks_data = self.sprite_sheet_data["grass_block"]["bitmasks"]
+
+        # Prepare my bits
         br, b, bl, r, l, tr, t, tl = 0, 0, 0, 0, 0, 0, 0, 0
+
+        # Get neighbors
         this_group_autotile_real_rects = self.autotile_real_rects_groups[self.current_group_index]
         index_lists = this.inflate_rect.collidelistall(
-            this_group_autotile_real_rects
-        )
+            this_group_autotile_real_rects)
+
+        # Early exit if there are no neighbors
+        if len(index_lists) == 1:  # Only includes the current tile
+            this.frame_index = current_autotile_bitmasks_data[0]
+            return
+
+        # Create my bitmask based on my neighbour
         for index in index_lists:
             other = this_group_autotile_real_rects[index]
-            # Myself? find someone else
             if other.rect.topleft == this.rect.topleft:
                 continue
             dx = other.rect.x - this.rect.x
             dy = other.rect.y - this.rect.y
-            # This other is too far, find someone else
             if abs(dx) > TILE_SIZE or abs(dy) > TILE_SIZE:
                 continue
             t += dx == 0 and dy == -TILE_SIZE
@@ -370,32 +445,44 @@ class LevelEditor():
         bl = bl and b and l
         mask_id = (br << 7) | (b << 6) | (bl << 5) | (
             r << 4) | (l << 3) | (tr << 2) | (t << 1) | tl
-        old = this.frame_index
-        this.frame_index = self.sprite_sheet_data["grass_block"]["bitmasks"][mask_id]
-        if old != this.frame_index:
+
+        # Update my frame index with my now ready bitmask
+        this.frame_index = current_autotile_bitmasks_data[mask_id]
+
+        # Tell my neighbour to update their frame index
+        if last == False:
             for index in index_lists:
                 other = this_group_autotile_real_rects[index]
-                self.update_tile_bitmasks(other)
-        # TODO: Vary fill later when reading save data: if this.frame_index == 8: this.frame_index = random.choice([8, 14])
+                if other.rect.topleft == this.rect.topleft:
+                    continue
+                other = this_group_autotile_real_rects[index]
+                self.update_tile_bitmasks(other, last=True)
+                # TODO: Vary fill later when reading save data: if this.frame_index == 8: this.frame_index = random.choice([8, 14])
 
 
 current_scene = LevelEditor()
 
 while 1:
+    # Dt
     dt = clock.tick(FPS) / 1000
+
+    # Get events
     for event in pygame.event.get():
         # Close window
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
         # Debug toggle
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_0:
                 is_debug = not is_debug
         # Scene event
         current_scene.input(event)
+
     # Scene update
     current_scene.update(native_surface, dt)
+
     # Resize native
     pygame.transform.scale_by(native_surface, RESOLUTION_SCALE, window_surface)
     pygame.display.update()
