@@ -537,6 +537,7 @@
     }
   },
   "blue_pipe": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 234,
@@ -595,6 +596,7 @@
     ]
   },
   "tree_branch": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 288,
@@ -671,6 +673,7 @@
     ]
   },
   "tree_leaves": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 16,
@@ -771,6 +774,7 @@
     ]
   },
   "big_mushroom": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 216,
@@ -823,6 +827,7 @@
     ]
   },
   "water_fall": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 252,
@@ -863,6 +868,7 @@
     ]
   },
   "water": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 234,
@@ -885,6 +891,7 @@
     ]
   },
   "lock": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 144,
@@ -895,6 +902,7 @@
     ]
   },
   "key": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -905,6 +913,7 @@
     ]
   },
   "crate": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 108,
@@ -915,6 +924,7 @@
     ]
   },
   "blank_block": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 162,
@@ -931,6 +941,7 @@
     ]
   },
   "dot_block": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 198,
@@ -947,6 +958,7 @@
     ]
   },
   "exclamation_block": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 180,
@@ -963,6 +975,7 @@
     ]
   },
   "chip": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -979,6 +992,7 @@
     ]
   },
   "brick": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 108,
@@ -989,6 +1003,7 @@
     ]
   },
   "stone": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -1017,6 +1032,7 @@
     ]
   },
   "heart": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 72,
@@ -1039,6 +1055,7 @@
     ]
   },
   "ladder": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 198,
@@ -1055,6 +1072,7 @@
     ]
   },
   "hanger": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 180,
@@ -1065,6 +1083,7 @@
     ]
   },
   "spike": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 144,
@@ -1075,6 +1094,7 @@
     ]
   },
   "diamond": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -1085,6 +1105,7 @@
     ]
   },
   "lever": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 72,
@@ -1107,6 +1128,7 @@
     ]
   },
   "arrow_sign": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -1123,6 +1145,7 @@
     ]
   },
   "sign": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 72,
@@ -1145,6 +1168,7 @@
     ]
   },
   "rope": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 162,
@@ -1185,6 +1209,7 @@
     ]
   },
   "spring": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -1201,6 +1226,7 @@
     ]
   },
   "short_fence": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 108,
@@ -1211,6 +1237,7 @@
     ]
   },
   "tall_fence": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 90,
@@ -1221,6 +1248,7 @@
     ]
   },
   "flag": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 198,
@@ -1243,6 +1271,7 @@
     ]
   },
   "tall_shroom": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 162,
@@ -1253,6 +1282,7 @@
     ]
   },
   "small_shroom": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 144,
@@ -1263,6 +1293,7 @@
     ]
   },
   "small_cactus": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -1273,6 +1304,7 @@
     ]
   },
   "small_tree": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 108,
@@ -1283,6 +1315,7 @@
     ]
   },
   "tall_grass": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 90,
@@ -1293,6 +1326,7 @@
     ]
   },
   "grass": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 72,
@@ -1303,6 +1337,7 @@
     ]
   },
   "cloud": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 234,
@@ -1331,6 +1366,7 @@
     ]
   },
   "coin": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 198,
@@ -1347,6 +1383,7 @@
     ]
   },
   "door": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 180,
@@ -1369,6 +1406,7 @@
     ]
   },
   "blue_button": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 144,
@@ -1385,6 +1423,7 @@
     ]
   },
   "metal_thin_tile": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 126,
@@ -1395,6 +1434,7 @@
     ]
   },
   "wood_thin_tile": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 108,
@@ -1405,6 +1445,7 @@
     ]
   },
   "snowman": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 90,
@@ -1415,6 +1456,7 @@
     ]
   },
   "snow_grass": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 72,
@@ -1425,6 +1467,7 @@
     ]
   },
   "numbers": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 0,
@@ -1567,6 +1610,7 @@
     ]
   },
   "forest_background": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 312,
@@ -1577,6 +1621,7 @@
     ]
   },
   "desert_background": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 264,
@@ -1587,6 +1632,7 @@
     ]
   },
   "day_background": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 216,
@@ -1597,6 +1643,7 @@
     ]
   },
   "green_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 0,
@@ -1613,6 +1660,7 @@
     ]
   },
   "grey_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 48,
@@ -1629,6 +1677,7 @@
     ]
   },
   "cyclop_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 96,
@@ -1645,6 +1694,7 @@
     ]
   },
   "yellow_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 144,
@@ -1661,6 +1711,7 @@
     ]
   },
   "spinner_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 192,
@@ -1671,6 +1722,7 @@
     ]
   },
   "blind_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 0,
@@ -1681,6 +1733,7 @@
     ]
   },
   "stomp_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 48,
@@ -1691,6 +1744,7 @@
     ]
   },
   "fish_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 96,
@@ -1707,6 +1761,7 @@
     ]
   },
   "red_roomba_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 144,
@@ -1729,6 +1784,7 @@
     ]
   },
   "blue_roomba_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 0,
@@ -1751,6 +1807,7 @@
     ]
   },
   "big_blue_roomba_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 72,
@@ -1773,6 +1830,7 @@
     ]
   },
   "bat_actor": {
+    "bitmasks": {},
     "frames_list": [
       {
         "x": 144,

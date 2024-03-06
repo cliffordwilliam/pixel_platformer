@@ -51,28 +51,43 @@ class Group(pygame.sprite.Group):
             # Bring real rect to rect
             sprite.real_rect.topleft = sprite.rect.topleft
             sprite.inflate_rect.center = sprite.real_rect.center
+
             # Get render position
             sprite_rect_render_position = (
                 sprite.rect.x - camera_rect.x,
                 sprite.rect.y - camera_rect.y
             )
+
             # Update sprite frame
             sprite_frame_region = sprite.frames_list[sprite.frame_index]
+
             # Render
             native_surface.blit(
                 sprite.image,
                 sprite_rect_render_position,
                 sprite_frame_region,
             )
+            if is_debug:
+                pygame.draw.rect(
+                    native_surface,
+                    "red",
+                    sprite.real_rect,
+                    1
+                )
 
 
 class LevelEditor():
     def __init__(self):
+        # Movement speed
+        self.speed = 4
+
         # Input flags
         self.is_right_pressed = False
         self.is_left_pressed = False
         self.is_down_pressed = False
         self.is_up_pressed = False
+        self.is_a_pressed = False
+        self.is_d_pressed = False
 
         # One scene one sprite sheet
         self.sprite_sheet_surface = pygame.image.load(
@@ -96,10 +111,9 @@ class LevelEditor():
                 )
                 frect_frames_list.append(pygame.Rect(rect))
             sprite_data["frames_list"] = frect_frames_list
+            sprite_data["bitmasks"] = {
+                int(key): value for key, value in sprite_data["bitmasks"].items()}
         self.sprite_sheet_data = json_data
-        self.sprite_sheet_data["grass_block"]["bitmasks"] = {
-            int(key): value for key, value in self.sprite_sheet_data["grass_block"]["bitmasks"].items()
-        }
 
         # Groups
         self.groups = [
@@ -156,34 +170,83 @@ class LevelEditor():
         self.group_buttons_data_list = []
         self.create_add_group_button()
 
+        # Menu buttons
+        menu_total_width = 0
+        self.menu_position_x_offset = 0
+        self.menu_buttons_data_list = []
+        for sprite_name, sprite_data in self.sprite_sheet_data.items():
+            sprite_frames_list = sprite_data["frames_list"]
+            first_sprite_frame = sprite_frames_list[0]
+            first_frame_width = first_sprite_frame.width
+            first_frame_height = first_sprite_frame.height
+            menu_button_rect = pygame.Rect(
+                0,
+                NATIVE_HEIGHT - first_frame_height,
+                first_frame_width,
+                first_frame_height
+            )
+            self.menu_buttons_data_list.append(
+                {
+                    "rect": menu_button_rect,
+                    "frames_list": sprite_frames_list,
+                    "first_sprite_frame": first_sprite_frame,
+                    "name": sprite_name
+                }
+            )
+            menu_total_width += first_frame_width
+        self.menu_right_limit = menu_total_width - NATIVE_WIDTH
+        self.current_menu_name = self.menu_buttons_data_list[0]["name"]
+
     def input(self, event):
         # Key
         if event.type == pygame.KEYDOWN:
             # Right
             if event.key == pygame.K_RIGHT:
                 self.is_right_pressed = True
+
             # Left
             if event.key == pygame.K_LEFT:
                 self.is_left_pressed = True
+
             # Down
             if event.key == pygame.K_DOWN:
                 self.is_down_pressed = True
+
             # Up
             if event.key == pygame.K_UP:
                 self.is_up_pressed = True
+
+            # A
+            if event.key == pygame.K_a:
+                self.is_a_pressed = True
+
+            # D
+            if event.key == pygame.K_d:
+                self.is_d_pressed = True
         elif event.type == pygame.KEYUP:
             # Right
             if event.key == pygame.K_RIGHT:
                 self.is_right_pressed = False
+
             # Left
             if event.key == pygame.K_LEFT:
                 self.is_left_pressed = False
+
             # Down
             if event.key == pygame.K_DOWN:
                 self.is_down_pressed = False
+
             # Up
             if event.key == pygame.K_UP:
                 self.is_up_pressed = False
+
+            # A
+            if event.key == pygame.K_a:
+                self.is_a_pressed = False
+
+            # D
+            if event.key == pygame.K_d:
+                self.is_d_pressed = False
 
         # Mouse
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -192,7 +255,7 @@ class LevelEditor():
                 event.pos[0] // RESOLUTION_SCALE,
                 event.pos[1] // RESOLUTION_SCALE
             )
-            mouse_scaled_snapped_in_game = (``
+            mouse_scaled_snapped_in_game = (
                 (mouse_scaled_global[0] +
                  self.camera_rect.x) // TILE_SIZE * TILE_SIZE,
                 (mouse_scaled_global[1] +
@@ -226,12 +289,21 @@ class LevelEditor():
                         self.current_group_index = button_data["index"]
                         return
 
+                # On group button click
+                for button_data in self.menu_buttons_data_list:
+                    if button_data["rect"].collidepoint(mouse_scaled_global):
+                        self.current_menu_name = button_data["name"]
+                        return
+
                 # On grid click
+                # TODO: use collidelistall instead of looping over all the tiles
                 for sprite in self.groups[self.current_group_index]:
                     if sprite.rect.topleft == mouse_scaled_snapped_in_game:
                         return
 
                 # Instance tile on mouse click
+                frames_list = self.sprite_sheet_data[self.current_menu_name]["frames_list"]
+                first_frame = frames_list[0]
                 sprite = Sprite(
                     self.groups[self.current_group_index],
                     self.sprite_sheet_surface,
@@ -239,10 +311,10 @@ class LevelEditor():
                     pygame.Rect(
                         0,
                         0,
-                        TILE_SIZE,
-                        TILE_SIZE
+                        first_frame.width,
+                        first_frame.height
                     ),
-                    self.sprite_sheet_data["grass_block"]["frames_list"]
+                    frames_list
                 )
 
                 # Add new sprite to lookup table
@@ -280,12 +352,22 @@ class LevelEditor():
 
     def update(self, native_surface, dt):
         # Arrow keys direction
-        direction_x = self.is_right_pressed - self.is_left_pressed
-        direction_y = self.is_down_pressed - self.is_up_pressed
+        camera_direction_x = self.is_right_pressed - self.is_left_pressed
+        camera_direction_y = self.is_down_pressed - self.is_up_pressed
+        menu_direction_x = self.is_d_pressed - self.is_a_pressed
 
         # Move camera with arrow keys
-        self.camera_rect.x += direction_x
-        self.camera_rect.y += direction_y
+        self.camera_rect.x += camera_direction_x * self.speed
+        self.camera_rect.y += camera_direction_y * self.speed
+
+        # Move menu
+        self.menu_position_x_offset += menu_direction_x * self.speed
+        self.menu_position_x_offset = max(
+            0, min(
+                self.menu_position_x_offset,
+                self.menu_right_limit
+            )
+        )
 
         # Clear
         native_surface.fill("black")
@@ -350,23 +432,51 @@ class LevelEditor():
 
         # Group button render
         for button_data in self.group_buttons_data_list:
+            # References
+            button_data_rect = button_data["rect"]
             is_active = button_data["index"] == self.current_group_index
             pygame.draw.rect(
                 native_surface,
                 "white" if is_active else "Black",
-                button_data["rect"],
-                # 1
+                button_data_rect,
             )
             pygame.draw.rect(
                 native_surface,
                 "Black" if is_active else "white",
-                button_data["rect"],
+                button_data_rect,
                 1
             )
             native_surface.blit(
                 button_data["active_text_surface"] if is_active else button_data["text_surface"],
                 button_data["text_rect"]
             )
+
+            # Menu button render
+            old_item_right_side = 0
+            for button_data in self.menu_buttons_data_list:
+                # References
+                button_data_rect = button_data["rect"]
+                button_data_rect.left = old_item_right_side - self.menu_position_x_offset
+                old_item_right_side += button_data_rect.width
+                pygame.draw.rect(
+                    native_surface,
+                    "black",
+                    button_data_rect,
+                )
+                native_surface.blit(
+                    self.sprite_sheet_surface,
+                    (
+                        button_data_rect.x,
+                        button_data_rect.y
+                    ),
+                    button_data["first_sprite_frame"],
+                )
+                pygame.draw.rect(
+                    native_surface,
+                    "white",
+                    button_data_rect,
+                    1
+                )
 
     def create_add_group_button(self):
         # Get groups len
@@ -407,7 +517,11 @@ class LevelEditor():
 
     def update_tile_bitmasks(self, this, last=False):
         # Get current data
-        current_autotile_bitmasks_data = self.sprite_sheet_data["grass_block"]["bitmasks"]
+        current_autotile_bitmasks_data = self.sprite_sheet_data[self.current_menu_name]["bitmasks"]
+
+        # Check if the data is empty
+        if not current_autotile_bitmasks_data:
+            return
 
         # Prepare my bits
         br, b, bl, r, l, tr, t, tl = 0, 0, 0, 0, 0, 0, 0, 0
