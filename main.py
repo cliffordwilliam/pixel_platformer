@@ -666,6 +666,10 @@ class RoomEditor():
     def input(self, event):
         # Key
         if event.type == pygame.KEYDOWN:
+            # P
+            if event.key == pygame.K_p:
+                game.is_debug = not game.is_debug
+
             # Right
             if event.key == pygame.K_1:
                 game.resolution_scale = 1
