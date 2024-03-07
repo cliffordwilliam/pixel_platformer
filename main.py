@@ -614,9 +614,17 @@ class RoomEditor():
             if neighbour == 0:
                 continue
 
-            # Not my kind? check other position
-            if neighbour.name != this.name:
-                continue
+            # I'm ground tile?
+            if this.name in ["grass_block", "dirt_block", "snow_block"]:
+                # But neighbour is not?
+                if neighbour.name not in ["grass_block", "dirt_block", "snow_block"]:
+                    continue
+
+            # I'm not ground?
+            else:
+                # Neighbour is not kind? check other position
+                if neighbour.name != this.name:
+                    continue
 
             # My neighbour!
             found_neighbours_list.append(
@@ -658,6 +666,19 @@ class RoomEditor():
     def input(self, event):
         # Key
         if event.type == pygame.KEYDOWN:
+            # Right
+            if event.key == pygame.K_1:
+                game.resolution_scale = 1
+            # Right
+            if event.key == pygame.K_2:
+                game.resolution_scale = 2
+            # Right
+            if event.key == pygame.K_3:
+                game.resolution_scale = 3
+            # Right
+            if event.key == pygame.K_4:
+                game.resolution_scale = 4
+
             # Right
             if event.key == pygame.K_RIGHT:
                 self.room_index += 1
@@ -836,6 +857,13 @@ class RoomEditor():
             # Clicked occupied space? Remove it
             if clicked_cell_item != 0:
                 clicked_cell_item.kill()
+
+            # remove from room
+            self.set_tile_from_room(
+                mouse_snapped_in_game_tile_unit[0],
+                mouse_snapped_in_game_tile_unit[1],
+                0
+            )
 
 
 # Set scene
