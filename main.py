@@ -803,11 +803,16 @@ class RoomEditor():
             if clicked_cell_item != 0:
                 return
 
+            # Handle big tile position - make sure their bottom left is snapped to grid
+            position_x = mouse_snapped_in_game[0]
+            position_y = mouse_snapped_in_game[1]
+            position_y -= self.sprite_frames_list[0][3] - game.tile_size
+
             # Instance tile on mouse click
             sprite = Sprite(
                 self.group,
                 self.sprite_sheet_surface,
-                mouse_snapped_in_game,
+                (position_x, position_y),
                 self.sprite_frames_list,
                 self.sprite_name
             )
