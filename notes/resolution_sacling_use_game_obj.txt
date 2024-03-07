@@ -1,0 +1,192 @@
+import pygame
+import sys
+from os import path
+import json
+
+
+pygame.init()
+
+
+class Game():
+    def __init__(self):
+        self.cg_pixel_3x5_font_path = path.join('fonts', 'cg-pixel-3x5.ttf')
+        self.cg_pixel_3x5_font_height = 5
+
+        self.grid_png_path = path.join('images', 'grid.png')
+        self.sprite_sheet_png_path = path.join('images', 'sprite_sheet.png')
+        self.sprite_sheet_data_path = path.join('data', 'sprite_sheet.json')
+
+        self.fps = 30
+
+        self.native_width = 432
+        self.native_height = 288
+        self.native_size = (self.native_width, self.native_height)
+
+        self.resolution_scale = 3
+
+        self.window_width = self.native_width * self.resolution_scale
+        self.window_height = self.native_height * self.resolution_scale
+        self.window_size = (self.window_width, self.window_height)
+
+        self.clock = pygame.time.Clock()
+
+        self.native_surface = pygame.Surface(self.native_size)
+        self.window_surface = pygame.display.set_mode(self.window_size)
+
+        self.font = pygame.font.Font(
+            self.cg_pixel_3x5_font_path, self.cg_pixel_3x5_font_height
+        )
+
+        self.is_debug = False
+        self.current_scene = None
+
+    def set_resolution_scale(self, new_resolution_scale):
+        self.resolution_scale = new_resolution_scale
+
+        self.window_width = self.native_width * self.resolution_scale
+        self.window_height = self.native_height * self.resolution_scale
+        self.window_size = (self.window_width, self.window_height)
+
+        self.window_surface = pygame.display.set_mode(self.window_size)
+
+
+game = Game()
+
+
+class Sprite(pygame.sprite.Sprite):
+    def __init__(self, groups, sprite_sheet_surface, position, frames_list):
+        super().__init__(groups)
+        self.image = sprite_sheet_surface
+        self.rect = self.image.get_rect(topleft=position)
+        self.frames_list = frames_list
+        self.frame_index = 0
+
+
+class Group(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+
+    def draw(self, native_surface, camera_rect):
+        for sprite in self:
+            # Get in_game position
+            sprite_rect_render_position = (
+                sprite.rect.x - camera_rect.x,
+                sprite.rect.y - camera_rect.y
+            )
+
+            # Update sprite frame
+            sprite_frame_region = sprite.frames_list[sprite.frame_index]
+
+            # Render with in_game position
+            native_surface.blit(
+                sprite.image,
+                sprite_rect_render_position,
+                sprite_frame_region,
+            )
+            if game.is_debug:
+                pass
+                # Draw frame rect global
+                # pygame.draw.rect(
+                #     native_surface,
+                #     "red",
+                #     sprite.frame_rect,
+                #     1
+                # )
+
+                # Draw frame rect in_game
+                # pygame.draw.rect(
+                #     native_surface,
+                #     "red",
+                #     pygame.Rect(
+                #         sprite_rect_render_position[0],
+                #         sprite_rect_render_position[1],
+                #         TILE_SIZE,
+                #         TILE_SIZE
+                #     ),
+                #     1
+                # )
+
+
+class LevelEditor():
+    def __init__(self):
+
+        # One scene one sprite sheet
+        self.sprite_sheet_surface = pygame.image.load(
+            game.sprite_sheet_png_path
+        ).convert_alpha()
+
+        # Load this sprite sheet data and store it
+        with open(game.sprite_sheet_data_path, 'r') as file:
+            json_data = json.load(file)
+        for sprite_name, sprite_data in json_data.items():
+            frect_frames_list = []
+            for frame in sprite_data["frames_list"]:
+                rect = pygame.Rect(
+                    frame["x"], frame["y"], frame["w"], frame["h"]
+                )
+                frect_frames_list.append(pygame.Rect(rect))
+            sprite_data["frames_list"] = frect_frames_list
+            sprite_data["bitmasks"] = {
+                int(key): value for key, value in sprite_data["bitmasks"].items()}
+        self.sprite_sheet_data = json_data
+
+        # Groups
+        self.groups = [
+            Group()
+        ]
+
+        # Things are drawn relative to this
+        self.camera_rect = pygame.Rect(
+            0,
+            0,
+            game.native_width,
+            game.native_height
+        )
+
+    def input(self, event):
+        pass
+
+    def update(self, native_surface, dt):
+        # Clear
+        native_surface.fill("black")
+
+        # Groups
+        for group in self.groups:
+            group.draw(native_surface, self.camera_rect)
+
+
+game.current_scene = LevelEditor()
+
+while 1:
+    # Dt
+    dt = game.clock.tick(game.fps) / 1000
+
+    # Get events
+    for event in pygame.event.get():
+        # Close window
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        # Debug toggle
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_1:
+                game.set_resolution_scale(1)
+            if event.key == pygame.K_2:
+                game.set_resolution_scale(2)
+            if event.key == pygame.K_3:
+                game.set_resolution_scale(3)
+            if event.key == pygame.K_4:
+                game.set_resolution_scale(4)
+                # is_debug = not is_debug
+
+        # Scene event
+        game.current_scene.input(event)
+
+    # Scene update
+    game.current_scene.update(game.native_surface, dt)
+
+    # Resize native
+    pygame.transform.scale_by(
+        game.native_surface, game.resolution_scale, game.window_surface)
+    pygame.display.update()

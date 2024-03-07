@@ -337,3 +337,5 @@ while 1:
 
     # Update window
     pygame.display.update()
+
+# TODO: Setters are overheads, maybe dont use them later
