@@ -237,12 +237,12 @@ class RoomEditor():
 
         # Sprite name text
         self.sprite_name_text_surface = game.font.render(
-            f"Sprite {self.sprite_name}",
+            f"A/D Sprite: {self.sprite_name}",
             False,
             "white"
         )
         self.sprite_name_text_rect = self.sprite_name_text_surface.get_rect(
-            topleft=(0, game.tile_size * 2)
+            midtop=(game.native_width // 2, 1)
         )
 
         # Things are drawn relative to this
@@ -496,20 +496,22 @@ class RoomEditor():
 
         # Group text
         self.group_text_surface = game.font.render(
-            f"group {self.group_index}",
+            f"U/D group: {self.group_index}",
             False,
             "white"
         )
-        self.group_text_rect = self.group_text_surface.get_rect()
+        self.group_text_rect = self.group_text_surface.get_rect(
+            topleft=(1, 1)
+        )
 
         # Room text
         self.room_text_surface = game.font.render(
-            f"room {self.room_index}",
+            f"R/L room: {self.room_index}",
             False,
             "white"
         )
         self.room_text_rect = self.room_text_surface.get_rect(
-            topleft=(0, game.tile_size)
+            topright=(game.native_width - 1, 1)
         )
 
     # Change sprite name -> update frames list and bitmasks
@@ -525,7 +527,7 @@ class RoomEditor():
             self.sprite_bitmasks = self.sprite_sheet_dict[self.sprite_name]["bitmasks"]
             self.frame_index = 0
             self.sprite_name_text_surface = game.font.render(
-                f"group {self.sprite_name}",
+                f"A/D Sprite: {self.sprite_name}",
                 False,
                 "white"
             )
@@ -553,7 +555,7 @@ class RoomEditor():
             self._group_index = value
             self.group = self.groups_list[self._group_index]
             self.group_text_surface = game.font.render(
-                f"group {self.group_index}",
+                f"U/D group: {self.group_index}",
                 False,
                 "white"
             )
@@ -571,7 +573,7 @@ class RoomEditor():
             self._room_index = value
             self.room = self.rooms_list[self._room_index]
             self.room_text_surface = game.font.render(
-                f"room {self.room_index}",
+                f"R/L room: {self.room_index}",
                 False,
                 "white"
             )
