@@ -137,12 +137,20 @@ class Group(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
 
-    def draw(self, camera_rect):
+    def draw(self, camera_rect, group):
         # Draw each sprite in this group
         for sprite in self:
+            # Do not do this in game - just use reference to same surface
+            image = sprite.image.copy()
+
+            # This is copied so that I can dim the ones not in the current group
+            if group != sprite.groups()[0]:
+                # If all ref the same one, I dim one all becomes dim
+                image.set_alpha(128)
+
             # Blit a region of the sprite sheet to native surface
             # native_surface.blit(
-            #     sprite.image,
+            #     image,
             #     (sprite.rect.x, sprite.rect.y),
             #     sprite.frame,
             # )
@@ -155,7 +163,7 @@ class Group(pygame.sprite.Group):
 
             # Render with in_game position
             game.native_surface.blit(
-                sprite.image,
+                image,
                 sprite_rect_render_position,
                 sprite.frame,
             )
@@ -793,7 +801,7 @@ class RoomEditor():
 
         # Groups draw
         for group in self.groups_list:
-            group.draw(self.camera_rect)
+            group.draw(self.camera_rect, self.group)
 
         # Group text draw
         game.native_surface.blit(
