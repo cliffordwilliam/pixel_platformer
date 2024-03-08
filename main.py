@@ -515,6 +515,16 @@ class RoomEditor():
             topright=(game.native_width - 1, 1)
         )
 
+        # Info text
+        self.info_text_surface = game.font.render(
+            f"p key: debug\n\nspace key: save",
+            False,
+            "white"
+        )
+        self.info_text_rect = self.info_text_surface.get_rect(
+            bottomright=(game.native_width - 1, game.native_height - 1)
+        )
+
     # Change sprite name -> update frames list and bitmasks
     @property
     def sprite_name(self):
@@ -737,6 +747,11 @@ class RoomEditor():
                 if self.frame_index > 0:
                     self.frame_index -= 1
 
+            # Space
+            if event.key == pygame.K_SPACE:
+                # TODO: save this - filter sprite to json
+                print(self.room_groups_list)
+
         # Mouse
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Lmb
@@ -796,6 +811,12 @@ class RoomEditor():
         game.native_surface.blit(
             self.sprite_name_text_surface,
             self.sprite_name_text_rect
+        )
+
+        # Info text draw
+        game.native_surface.blit(
+            self.info_text_surface,
+            self.info_text_rect
         )
 
         if game.is_debug:
