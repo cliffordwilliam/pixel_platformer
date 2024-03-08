@@ -137,7 +137,7 @@ class Group(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
 
-    def draw(self, native_surface, camera_rect):
+    def draw(self, camera_rect):
         # Draw each sprite in this group
         for sprite in self:
             # Blit a region of the sprite sheet to native surface
@@ -154,7 +154,7 @@ class Group(pygame.sprite.Group):
             )
 
             # Render with in_game position
-            native_surface.blit(
+            game.native_surface.blit(
                 sprite.image,
                 sprite_rect_render_position,
                 sprite.frame,
@@ -162,33 +162,34 @@ class Group(pygame.sprite.Group):
 
             # Debug draw
             if game.is_debug:
-                # Draw image rect global
-                pygame.draw.rect(
-                    native_surface,
-                    "red",
-                    sprite.rect,
-                    1
-                )
-                # Draw frame rect global
-                pygame.draw.rect(
-                    native_surface,
-                    "green",
-                    sprite.frame_rect,
-                    1
-                )
-
-                # Draw frame rect in_game
+                # # Draw image rect global
                 # pygame.draw.rect(
-                #     native_surface,
+                #     game.native_surface,
                 #     "red",
-                #     pygame.Rect(
-                #         sprite_rect_render_position[0],
-                #         sprite_rect_render_position[1],
-                #         TILE_SIZE,
-                #         TILE_SIZE
-                #     ),
+                #     sprite.rect,
                 #     1
                 # )
+
+                # # Draw frame rect global
+                # pygame.draw.rect(
+                #     game.native_surface,
+                #     "green",
+                #     sprite.frame_rect,
+                #     1
+                # )
+
+                # Draw frame rect in_game
+                pygame.draw.rect(
+                    game.native_surface,
+                    "red",
+                    pygame.Rect(
+                        sprite_rect_render_position[0],
+                        sprite_rect_render_position[1],
+                        sprite.frame_rect.width,
+                        sprite.frame_rect.height
+                    ),
+                    1
+                )
 
 
 class RoomEditor():
@@ -237,7 +238,7 @@ class RoomEditor():
 
         # Sprite name text
         self.sprite_name_text_surface = game.font.render(
-            f"A/D Sprite: {self.sprite_name}",
+            f"a/d/wheel sprite: {self.sprite_name}",
             False,
             "white"
         )
@@ -496,7 +497,7 @@ class RoomEditor():
 
         # Group text
         self.group_text_surface = game.font.render(
-            f"U/D group: {self.group_index}",
+            f"u/d group: {self.group_index}",
             False,
             "white"
         )
@@ -506,7 +507,7 @@ class RoomEditor():
 
         # Room text
         self.room_text_surface = game.font.render(
-            f"R/L room: {self.room_index}",
+            f"r/l room: {self.room_index}",
             False,
             "white"
         )
@@ -527,7 +528,7 @@ class RoomEditor():
             self.sprite_bitmasks = self.sprite_sheet_dict[self.sprite_name]["bitmasks"]
             self.frame_index = 0
             self.sprite_name_text_surface = game.font.render(
-                f"A/D Sprite: {self.sprite_name}",
+                f"a/d/wheel sprite: {self.sprite_name}",
                 False,
                 "white"
             )
@@ -555,7 +556,7 @@ class RoomEditor():
             self._group_index = value
             self.group = self.groups_list[self._group_index]
             self.group_text_surface = game.font.render(
-                f"U/D group: {self.group_index}",
+                f"u/d group: {self.group_index}",
                 False,
                 "white"
             )
@@ -573,7 +574,7 @@ class RoomEditor():
             self._room_index = value
             self.room = self.rooms_list[self._room_index]
             self.room_text_surface = game.font.render(
-                f"R/L room: {self.room_index}",
+                f"r/l room: {self.room_index}",
                 False,
                 "white"
             )
@@ -597,6 +598,23 @@ class RoomEditor():
                       self.room_width_tile_unit + x_tile_unit] = value
 
     def update_bitmasks(self, this, position_tile_unit, last=False):
+        if game.is_debug:
+            # Get in_game position
+            sprite_rect_render_position = (
+                this.frame_rect.x - self.camera_rect.x,
+                this.frame_rect.y - self.camera_rect.y
+            )
+            pygame.draw.rect(
+                game.native_surface,
+                "green",
+                pygame.Rect(
+                    sprite_rect_render_position[0],
+                    sprite_rect_render_position[1],
+                    this.frame_rect.width,
+                    this.frame_rect.height
+                ),
+            )
+
         # Raw bits
         br, b, bl, r, l, tr, t, tl = 0, 0, 0, 0, 0, 0, 0, 0
 
@@ -738,10 +756,13 @@ class RoomEditor():
             if event.button == 3:
                 self.is_rmb_pressed = False
 
+        if event.type == pygame.MOUSEWHEEL:
+            self.sprite_name_index += event.y
+
     # Scene update
-    def update(self, native_surface, dt):
+    def update(self, dt):
         # Clear
-        native_surface.fill("black")
+        game.native_surface.fill("black")
 
         # Grid
         grid_render_position = (
@@ -750,32 +771,47 @@ class RoomEditor():
             ((self.grid_rect.y - self.camera_rect.y) %
              game.tile_size) - game.tile_size
         )
-        native_surface.blit(
+        game.native_surface.blit(
             self.grid_surface,
             grid_render_position
         )
 
         # Groups draw
         for group in self.groups_list:
-            group.draw(native_surface, self.camera_rect)
+            group.draw(self.camera_rect)
 
         # Group text draw
-        native_surface.blit(
+        game.native_surface.blit(
             self.group_text_surface,
             self.group_text_rect
         )
 
         # Room text draw
-        native_surface.blit(
+        game.native_surface.blit(
             self.room_text_surface,
             self.room_text_rect
         )
 
         # Sprite name text draw
-        native_surface.blit(
+        game.native_surface.blit(
             self.sprite_name_text_surface,
             self.sprite_name_text_rect
         )
+
+        if game.is_debug:
+            fps_surface = game.font.render(
+                f"fps: {int(1//dt)}",
+                False,
+                "white",
+                "red"
+            )
+            fps_rect = fps_surface.get_rect(
+                bottomleft=(0, game.native_height)
+            )
+            game.native_surface.blit(
+                fps_surface,
+                fps_rect
+            )
 
         if self.is_lmb_pressed:
             # Get mouse position
@@ -895,7 +931,7 @@ while 1:
         game.scene.input(event)
 
     # Scene update
-    game.scene.update(game.native_surface, dt)
+    game.scene.update(dt)
 
     # Resize native
     pygame.transform.scale_by(
