@@ -12,61 +12,73 @@
         [
             {
                 "name": "grass_block",
-                "position_x": 144.0,
-                "position_y": 144.0,
+                "position_x": 36.0,
+                "position_y": 108.0,
                 "frame_index": 2
             },
             {
                 "name": "grass_block",
-                "position_x": 162.0,
-                "position_y": 144.0,
+                "position_x": 54.0,
+                "position_y": 108.0,
                 "frame_index": 1
             },
             {
                 "name": "grass_block",
-                "position_x": 180.0,
-                "position_y": 144.0,
-                "frame_index": 1
-            },
-            {
-                "name": "grass_block",
-                "position_x": 198.0,
-                "position_y": 144.0,
-                "frame_index": 1
-            },
-            {
-                "name": "grass_block",
-                "position_x": 216.0,
-                "position_y": 144.0,
+                "position_x": 72.0,
+                "position_y": 108.0,
                 "frame_index": 0
             },
             {
                 "name": "grass_block",
-                "position_x": 144.0,
+                "position_x": 36.0,
+                "position_y": 126.0,
+                "frame_index": 15
+            },
+            {
+                "name": "grass_block",
+                "position_x": 54.0,
+                "position_y": 126.0,
+                "frame_index": 8
+            },
+            {
+                "name": "grass_block",
+                "position_x": 72.0,
+                "position_y": 126.0,
+                "frame_index": 13
+            },
+            {
+                "name": "grass_block",
+                "position_x": 36.0,
+                "position_y": 144.0,
+                "frame_index": 15
+            },
+            {
+                "name": "grass_block",
+                "position_x": 54.0,
+                "position_y": 144.0,
+                "frame_index": 8
+            },
+            {
+                "name": "grass_block",
+                "position_x": 72.0,
+                "position_y": 144.0,
+                "frame_index": 13
+            },
+            {
+                "name": "grass_block",
+                "position_x": 36.0,
                 "position_y": 162.0,
                 "frame_index": 11
             },
             {
                 "name": "grass_block",
-                "position_x": 162.0,
+                "position_x": 54.0,
                 "position_y": 162.0,
                 "frame_index": 10
             },
             {
                 "name": "grass_block",
-                "position_x": 180.0,
-                "position_y": 162.0,
-                "frame_index": 10
-            },
-            {
-                "name": "grass_block",
-                "position_x": 198.0,
-                "position_y": 162.0,
-                "frame_index": 10
-            },
-            {
-                "name": "grass_block",
-                "position_x": 216.0,
+                "position_x": 72.0,
                 "position_y": 162.0,
                 "frame_index": 9
             }

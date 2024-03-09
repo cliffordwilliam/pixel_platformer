@@ -31,7 +31,6 @@ SPRITE_SHEET_JSON_PATH = path.join('data', 'sprite_sheet.json')
 ROOMS_DIR_PATH = path.join('rooms')
 
 ROOM_1_PATH = path.join(ROOMS_DIR_PATH, 'room1.json')
-ROOM_2_PATH = path.join(ROOMS_DIR_PATH, 'room2.json')
 
 # Native position and dimensions data
 NATIVE_RECT = pg.Rect(
@@ -230,7 +229,7 @@ class Group(pg.sprite.Group):
 class Room1Scene():
     def __init__(self):
         # Load room for this scene
-        with open(ROOM_2_PATH, 'r') as file:
+        with open(ROOM_1_PATH, 'r') as file:
             json_room_data = load(file)
             print(json_room_data["sprite_sheet_path"])
 

@@ -1,0 +1,161 @@
+{
+    "sprite_sheet_path": "images\\sprite_sheet.png",
+    "room_topleft_room_unit_x": -1,
+    "room_topleft_room_unit_y": 0,
+    "room_scale_x": 1,
+    "room_scale_y": 2,
+    "room_width_tile_unit": 24,
+    "room_height_tile_unit": 32,
+    "room_width": 432,
+    "room_height": 576,
+    "rooms_list": [
+        [
+            {
+                "name": "grass_block",
+                "position_x": -18.0,
+                "position_y": 234.0,
+                "frame_index": 3
+            },
+            {
+                "name": "grass_block",
+                "position_x": -54.0,
+                "position_y": 252.0,
+                "frame_index": 2
+            },
+            {
+                "name": "grass_block",
+                "position_x": -36.0,
+                "position_y": 252.0,
+                "frame_index": 1
+            },
+            {
+                "name": "grass_block",
+                "position_x": -18.0,
+                "position_y": 252.0,
+                "frame_index": 14
+            },
+            {
+                "name": "grass_block",
+                "position_x": -432.0,
+                "position_y": 270.0,
+                "frame_index": 2
+            },
+            {
+                "name": "grass_block",
+                "position_x": -414.0,
+                "position_y": 270.0,
+                "frame_index": 1
+            },
+            {
+                "name": "grass_block",
+                "position_x": -396.0,
+                "position_y": 270.0,
+                "frame_index": 1
+            },
+            {
+                "name": "grass_block",
+                "position_x": -378.0,
+                "position_y": 270.0,
+                "frame_index": 1
+            },
+            {
+                "name": "grass_block",
+                "position_x": -360.0,
+                "position_y": 270.0,
+                "frame_index": 1
+            },
+            {
+                "name": "grass_block",
+                "position_x": -342.0,
+                "position_y": 270.0,
+                "frame_index": 0
+            },
+            {
+                "name": "grass_block",
+                "position_x": -54.0,
+                "position_y": 270.0,
+                "frame_index": 11
+            },
+            {
+                "name": "grass_block",
+                "position_x": -36.0,
+                "position_y": 270.0,
+                "frame_index": 10
+            },
+            {
+                "name": "grass_block",
+                "position_x": -18.0,
+                "position_y": 270.0,
+                "frame_index": 9
+            },
+            {
+                "name": "grass_block",
+                "position_x": -432.0,
+                "position_y": 288.0,
+                "frame_index": 11
+            },
+            {
+                "name": "grass_block",
+                "position_x": -414.0,
+                "position_y": 288.0,
+                "frame_index": 10
+            },
+            {
+                "name": "grass_block",
+                "position_x": -396.0,
+                "position_y": 288.0,
+                "frame_index": 10
+            },
+            {
+                "name": "grass_block",
+                "position_x": -378.0,
+                "position_y": 288.0,
+                "frame_index": 10
+            },
+            {
+                "name": "grass_block",
+                "position_x": -360.0,
+                "position_y": 288.0,
+                "frame_index": 10
+            },
+            {
+                "name": "grass_block",
+                "position_x": -342.0,
+                "position_y": 288.0,
+                "frame_index": 9
+            },
+            {
+                "name": "grass_block",
+                "position_x": -90.0,
+                "position_y": 558.0,
+                "frame_index": 6
+            },
+            {
+                "name": "grass_block",
+                "position_x": -72.0,
+                "position_y": 558.0,
+                "frame_index": 5
+            },
+            {
+                "name": "grass_block",
+                "position_x": -54.0,
+                "position_y": 558.0,
+                "frame_index": 5
+            },
+            {
+                "name": "grass_block",
+                "position_x": -36.0,
+                "position_y": 558.0,
+                "frame_index": 5
+            },
+            {
+                "name": "grass_block",
+                "position_x": -18.0,
+                "position_y": 558.0,
+                "frame_index": 4
+            }
+        ],
+        [],
+        []
+    ]
+}
