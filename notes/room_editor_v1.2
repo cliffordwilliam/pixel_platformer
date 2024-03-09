@@ -285,14 +285,11 @@ class RoomEditor():
             game.native_height
         )
 
-        with open(game.new_room_json_path, 'r') as file:
-            json_data = json.load(file)
-
         # Room
-        self.room_width_tile_unit = json_data["room_width_tile_unit"]
-        self.room_height_tile_unit = json_data["room_height_tile_unit"]
-        self.room_width = json_data["room_width"]
-        self.room_height = json_data["room_height"]
+        self.room_width_tile_unit = 24
+        self.room_height_tile_unit = 16
+        self.room_width = 24 * game.tile_size
+        self.room_height = 16 * game.tile_size
         room = []
         total = self.room_width_tile_unit * self.room_height_tile_unit
         for _ in range(total):
@@ -335,40 +332,6 @@ class RoomEditor():
         self.info_text_rect = self.info_text_surface.get_rect(
             bottomleft=(1, game.native_height - 1)
         )
-
-        for group_index, room in enumerate(json_data["rooms_list"]):
-            self.group_index = group_index
-            for cell in room:
-                if cell == 0:
-                    continue
-                if cell == -1:
-                    continue
-                self.sprite_name = cell["name"]
-                # Instance tile on mouse click
-                sprite = Sprite(
-                    self.group,
-                    self.sprite_sheet_surface,
-                    (cell["position_x"], cell["position_y"]),
-                    self.sprite_frames_list,
-                    self.sprite_name
-                )
-                sprite.frame_index = cell["frame_index"]
-                mouse_snapped_in_game = (  # For tile placement clicks
-                    (cell["position_x"] +
-                        self.camera_rect.x) // game.tile_size * game.tile_size,
-                    (cell["position_y"] +
-                        self.camera_rect.y) // game.tile_size * game.tile_size
-                )
-                mouse_snapped_in_game_tile_unit = (  # For collision check
-                    int(mouse_snapped_in_game[0] // game.tile_size),
-                    int(mouse_snapped_in_game[1] // game.tile_size)
-                )
-                # Save this sprite to room map
-                self.set_tile_from_room(
-                    mouse_snapped_in_game_tile_unit[0],
-                    mouse_snapped_in_game_tile_unit[1],
-                    sprite
-                )
 
     # Change sprite_name
         # sprite_frames_list

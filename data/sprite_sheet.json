@@ -1,6 +1,5 @@
 {
   "grass_block": {
-    "animations": {},
     "frames_list": [
       {
         "x": 54,
@@ -180,7 +179,6 @@
     }
   },
   "dirt_block": {
-    "animations": {},
     "frames_list": [
       {
         "x": 54,
@@ -360,7 +358,6 @@
     }
   },
   "snow_block": {
-    "animations": {},
     "frames_list": [
       {
         "x": 54,
@@ -589,7 +586,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 234,
@@ -697,7 +693,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 288,
@@ -823,7 +818,6 @@
       "254": 0,
       "255": 6
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 288,
@@ -973,7 +967,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 216,
@@ -1069,7 +1062,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 252,
@@ -1159,7 +1151,6 @@
       "254": 0,
       "255": 2
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 234,
@@ -1183,7 +1174,6 @@
   },
   "lock": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 144,
@@ -1195,7 +1185,6 @@
   },
   "key": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1207,7 +1196,6 @@
   },
   "crate": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 108,
@@ -1219,7 +1207,6 @@
   },
   "blank_block": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 162,
@@ -1237,7 +1224,6 @@
   },
   "dot_block": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 198,
@@ -1255,7 +1241,6 @@
   },
   "exclamation_block": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 180,
@@ -1273,7 +1258,6 @@
   },
   "chip": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1291,7 +1275,6 @@
   },
   "brick": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 108,
@@ -1351,7 +1334,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1381,7 +1363,6 @@
   },
   "heart": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 72,
@@ -1453,7 +1434,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 198,
@@ -1471,7 +1451,6 @@
   },
   "hanger": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 180,
@@ -1483,7 +1462,6 @@
   },
   "spike": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 144,
@@ -1495,7 +1473,6 @@
   },
   "diamond": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1507,7 +1484,6 @@
   },
   "lever": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 72,
@@ -1531,7 +1507,6 @@
   },
   "arrow_sign": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1549,7 +1524,6 @@
   },
   "sign": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 72,
@@ -1621,7 +1595,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 162,
@@ -1663,7 +1636,6 @@
   },
   "spring": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1681,7 +1653,6 @@
   },
   "short_fence": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 108,
@@ -1693,7 +1664,6 @@
   },
   "tall_fence": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 90,
@@ -1753,7 +1723,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 198,
@@ -1777,7 +1746,6 @@
   },
   "tall_shroom": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 162,
@@ -1789,7 +1757,6 @@
   },
   "small_shroom": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 144,
@@ -1801,7 +1768,6 @@
   },
   "small_cactus": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1813,7 +1779,6 @@
   },
   "small_tree": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 108,
@@ -1825,7 +1790,6 @@
   },
   "tall_grass": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 90,
@@ -1837,7 +1801,6 @@
   },
   "grass": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 72,
@@ -1897,7 +1860,6 @@
       "254": 0,
       "255": 0
     },
-    "animations": {},
     "frames_list": [
       {
         "x": 234,
@@ -1927,7 +1889,6 @@
   },
   "coin": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 198,
@@ -1945,7 +1906,6 @@
   },
   "door": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 180,
@@ -1969,7 +1929,6 @@
   },
   "blue_button": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 144,
@@ -1987,7 +1946,6 @@
   },
   "metal_thin_tile": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 126,
@@ -1999,7 +1957,6 @@
   },
   "wood_thin_tile": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 108,
@@ -2011,7 +1968,6 @@
   },
   "snowman": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 90,
@@ -2023,7 +1979,6 @@
   },
   "snow_grass": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 72,
@@ -2035,7 +1990,6 @@
   },
   "numbers": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 0,
@@ -2179,7 +2133,6 @@
   },
   "forest_background": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 312,
@@ -2191,7 +2144,6 @@
   },
   "desert_background": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 264,
@@ -2203,7 +2155,6 @@
   },
   "day_background": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 216,
@@ -2215,7 +2166,6 @@
   },
   "green_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 0,
@@ -2233,7 +2183,6 @@
   },
   "grey_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 48,
@@ -2251,7 +2200,6 @@
   },
   "cyclop_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 96,
@@ -2269,7 +2217,6 @@
   },
   "yellow_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 144,
@@ -2287,7 +2234,6 @@
   },
   "spinner_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 192,
@@ -2299,7 +2245,6 @@
   },
   "blind_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 0,
@@ -2311,7 +2256,6 @@
   },
   "stomp_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 48,
@@ -2323,7 +2267,6 @@
   },
   "fish_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 96,
@@ -2341,7 +2284,6 @@
   },
   "red_roomba_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 144,
@@ -2365,7 +2307,6 @@
   },
   "blue_roomba_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 0,
@@ -2389,7 +2330,6 @@
   },
   "big_blue_roomba_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 72,
@@ -2413,7 +2353,6 @@
   },
   "bat_actor": {
     "bitmasks": {},
-    "animations": {},
     "frames_list": [
       {
         "x": 144,
