@@ -368,7 +368,7 @@ class RoomEditor():
 
         # Info text
         self.info_text_surface = FONT.render(
-            f"p key: debug\n\nspace key: save\n\narrow keys: move camera\n\n",
+            f"p key: debug\n\nspace key: save\n\nwasd keys: move camera",
             False,
             "white"
         )
@@ -575,16 +575,16 @@ class RoomEditor():
                 game.is_debug = not game.is_debug
 
             # Right
-            if event.key == pg.K_RIGHT:
+            if event.key == pg.K_d:
                 self.is_right_pressed = 1
             # Left
-            if event.key == pg.K_LEFT:
+            if event.key == pg.K_a:
                 self.is_left_pressed = 1
             # Up
-            if event.key == pg.K_UP:
+            if event.key == pg.K_w:
                 self.is_up_pressed = 1
             # Down
-            if event.key == pg.K_DOWN:
+            if event.key == pg.K_s:
                 self.is_down_pressed = 1
 
             # 1
@@ -662,16 +662,16 @@ class RoomEditor():
         # Key up
         elif event.type == pg.KEYUP:
             # Right
-            if event.key == pg.K_RIGHT:
+            if event.key == pg.K_d:
                 self.is_right_pressed = 0
             # Left
-            if event.key == pg.K_LEFT:
+            if event.key == pg.K_a:
                 self.is_left_pressed = 0
             # Up
-            if event.key == pg.K_UP:
+            if event.key == pg.K_w:
                 self.is_up_pressed = 0
             # Down
-            if event.key == pg.K_DOWN:
+            if event.key == pg.K_s:
                 self.is_down_pressed = 0
 
         # Mouse
