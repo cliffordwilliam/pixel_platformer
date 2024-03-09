@@ -27,7 +27,7 @@ class Game():
         self.sprite_sheet_data_path = path.join('data', 'sprite_sheet.json')
 
         # New room path - load data test
-        self.to_be_load_room_json_path = path.join('rooms', 'room1.json')
+        self.to_be_load_room_json_path = path.join('rooms', 'room3.json')
 
         # Rooms dir
         self.rooms_dir = path.join('rooms')

@@ -27,7 +27,7 @@ class Game():
         self.sprite_sheet_data_path = path.join('data', 'sprite_sheet.json')
 
         # New room path - load data test
-        self.to_be_load_room_json_path = path.join('rooms', 'room1.json')
+        self.room1_json_path = path.join('rooms', 'room1.json')
 
         # Rooms dir
         self.rooms_dir = path.join('rooms')
@@ -274,6 +274,10 @@ class RoomEditor():
         self.sprite_bitmasks = self.sprite_sheet_dict[self.sprite_name]["bitmasks"]
         self.frame_index = 0
 
+        # Room1 json data
+        # with open(game.room1_json_path, 'r') as file:
+        #     json_data = json.load(file)
+
         # Sprite name text
         self.sprite_name_text_surface = game.font.render(
             f"sprite: {self.sprite_name}",
@@ -292,25 +296,9 @@ class RoomEditor():
             game.native_height
         )
 
-        with open(game.to_be_load_room_json_path, 'r') as file:
-            json_data = json.load(file)
-
         # Room settings
-        # self.room_topleft_room_unit = (-1, 0)
-        # self.room_scale = (3, 1)
-        
-        ##################
-        # LOAD ROOM TEST #
-        ##################
-        self.room_topleft_room_unit = (
-            json_data["room_topleft_room_unit"][0],
-            json_data["room_topleft_room_unit"][1]
-        )
-        # self.room_scale = (3, 1)
-        self.room_scale = (
-            json_data["room_scale"][0],
-            json_data["room_scale"][1]
-        )
+        self.room_topleft_room_unit = (-1, 0)
+        self.room_scale = (3, 1)
 
         # Room base size
         self.room_base_width = game.room_base_width_tile_unit * game.tile_size
@@ -379,39 +367,6 @@ class RoomEditor():
         self.info_text_rect = self.info_text_surface.get_rect(
             bottomleft=(1, game.native_height - 1)
         )
-        
-        ###########################
-        # INSTANCE LOAD ROOM TEST #
-        ###########################
-        for i, room in enumerate(json_data["rooms_list"]):
-            self.group_index = i
-            for cell in room:
-                self.sprite_name = cell["name"]
-                # Instance tile on mouse click
-                sprite = Sprite(
-                    self.group,
-                    self.sprite_sheet_surface,
-                    (cell["position_x"], cell["position_y"]),
-                    self.sprite_frames_list,
-                    self.sprite_name
-                )
-                sprite.frame_index = cell["frame_index"]
-                # Save this sprite to room map
-                mouse_snapped_in_game = (  # For tile placement clicks
-                    (cell["position_x"] +
-                        self.camera_rect.x) // game.tile_size * game.tile_size,
-                    (cell["position_y"] +
-                        self.camera_rect.y) // game.tile_size * game.tile_size
-                )
-                mouse_snapped_in_game_tile_unit = (  # For collision check
-                    int(mouse_snapped_in_game[0] // game.tile_size),
-                    int(mouse_snapped_in_game[1] // game.tile_size)
-                )
-                self.set_tile_from_room(
-                    mouse_snapped_in_game_tile_unit[0],
-                    mouse_snapped_in_game_tile_unit[1],
-                    sprite
-                )
 
     # Change sprite_name
         # sprite_frames_list
@@ -668,8 +623,6 @@ class RoomEditor():
                     "room_height_tile_unit": self.room_height_tile_unit,
                     "room_width": self.room_width,
                     "room_height": self.room_height,
-                    "room_topleft_room_unit": self.room_topleft_room_unit,
-                    "room_scale": self.room_scale,
                     "rooms_list": processed_rooms_list
                 }
 
